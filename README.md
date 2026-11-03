@@ -248,21 +248,20 @@ powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 
 ---
 
-## 七、推到 GitHub
+## 七、GitHub
 
-仓库已由你自己创建（DS-Quest）。第一次推送：
+仓库：<https://github.com/enming-066/DS-Quest>（`main` 分支，已配置好 `origin`）
+
+以后改完内容，更新到 GitHub 就三步：
 
 ```powershell
-git init
 git add .
-git commit -m "feat: DS Quest v1 - 线性表 / 栈 / 队列 学习与判题"
-git branch -M main
-git remote add origin https://github.com/<你的用户名>/DS-Quest.git
-git push -u origin main
+git commit -m "content: 补充某某章节"
+git push
 ```
 
 `.gitignore` 已经排除了 `backend/vendor`、`node_modules`、`dist`、`data`、`.env` 和临时目录，
-**API Key 不会被提交**。别人 clone 下来跑 `setup.bat` 就能装好。
+**API Key 不会被提交**（仓库里只有 `backend/.env.example` 模板）。别人 clone 下来跑 `setup.bat` 就能装好。
 
 ---
 
