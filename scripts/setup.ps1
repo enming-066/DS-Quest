@@ -1,4 +1,4 @@
-# 一次性安装脚本：装后端依赖 + 前端依赖 + 构建前端
+﻿# 一次性安装脚本：装后端依赖 + 前端依赖 + 构建前端
 # 用法：双击 setup.bat，或者 powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 param([switch]$OnlyFrontend)
 

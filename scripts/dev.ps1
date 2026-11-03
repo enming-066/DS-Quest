@@ -1,4 +1,4 @@
-# 开发模式：后端热重载（8000） + Vite 前端（5173）
+﻿# 开发模式：后端热重载（8000） + Vite 前端（5173）
 # 改前端代码会即时刷新；改后端代码会自动重启。
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\common.ps1"

@@ -1,4 +1,4 @@
-# 在项目目录里找到并验证一个可用的 Python 解释器，结果写进 backend/.python-path
+﻿# 在项目目录里找到并验证一个可用的 Python 解释器，结果写进 backend/.python-path
 # 被 start.ps1 / setup.ps1 / verify.ps1 共用（dot-source 引入）
 
 $script:ProjectRoot = Split-Path -Parent $PSScriptRoot

@@ -1,4 +1,4 @@
-# 构建前端（生成 frontend/dist，后端会直接托管它）
+﻿# 构建前端（生成 frontend/dist，后端会直接托管它）
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\common.ps1"
 Set-Location (Join-Path $ProjectRoot 'frontend')

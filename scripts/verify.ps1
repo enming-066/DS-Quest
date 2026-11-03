@@ -1,4 +1,4 @@
-# 质量自检：内容（参考解真的跑测试点）+ 接口冒烟
+﻿# 质量自检：内容（参考解真的跑测试点）+ 接口冒烟
 # 用法：powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\common.ps1"

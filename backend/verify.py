@@ -122,6 +122,8 @@ def verify_templates() -> int:
                 for issue in compiled.issues[:3]:
                     print(f"      第{issue['line']}行 {issue['title']}: {issue['message']}")
                 failures += 1
+            if compiled.exe is not None:
+                shutil.rmtree(compiled.exe.parent, ignore_errors=True)
     return failures
 
 

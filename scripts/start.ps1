@@ -1,7 +1,9 @@
-# DS Quest 启动脚本
+﻿# DS Quest 启动脚本
 #   1. 找一个能用的 Python
 #   2. 确认前端产物存在（没有就尝试构建）
 #   3. 启动 FastAPI（同时托管前端页面），自动打开浏览器
+param([switch]$NoBrowser)
+
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\common.ps1"
 Set-Location $ProjectRoot
@@ -48,4 +50,6 @@ Write-Host "  地址   : $url" -ForegroundColor Cyan
 Write-Host '  停止   : 在这个窗口按 Ctrl + C' -ForegroundColor DarkGray
 Write-Host ''
 
-Invoke-DSQPython -Exe $python -Arguments @('backend\run.py')
+$pyArgs = @('backend\run.py')
+if ($NoBrowser) { $pyArgs += '--no-browser' }
+Invoke-DSQPython -Exe $python -Arguments $pyArgs
