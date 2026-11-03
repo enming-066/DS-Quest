@@ -123,6 +123,9 @@ async function submit() {
         <div class="p-title-row">
           <h1>{{ problem.title }}</h1>
           <span class="stars">{{ difficultyDots }}</span>
+          <span v-if="problem.optional" class="chip chip-lock" title="课件未涉及，不计入章节进度">
+            拓展 · 考试不要求
+          </span>
           <span v-if="problem.solved" class="chip chip-success">
             <Icon name="check" :size="12" /> 已通过
           </span>

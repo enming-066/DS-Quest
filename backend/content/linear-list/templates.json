@@ -8,12 +8,36 @@
     "purpose": "课件第 1 章 P13~P16 就讲这一份代码，期末考「写出顺序表插入算法并分析复杂度」时按它写。",
     "file": "code/array-list.cpp",
     "explanations": [
-      { "anchor": "insert(theIndex, x) 把 x 插到", "span": 3, "text": "注意下标语义：insert(2, x) 之后 x 的下标就是 2，原来的元素整体后移。这就是课件里「theIndex 是最终下标」的约定。" },
-      { "anchor": "void insert(int theIndex, const T& theElement) {", "span": 6, "text": "三个动作：检查下标 → 空间不够就扩容 → 从后往前挪出空位。顺序不能反。" },
-      { "anchor": "for (int i = listSize - 1; i >= theIndex; i--) // 从后往前挪", "span": 2, "text": "必须从后往前。若从前往后，前一个会覆盖后一个，数据就毁了。" },
-      { "anchor": "changeLength1D(element, arrayLength, 2 * arrayLength);", "span": 1, "text": "数组满了要整体搬到两倍大的新数组，这一步是 Θ(n)，但摊还到每次插入上仍接近 Θ(1)。" },
-      { "anchor": "void erase(int theIndex) {", "span": 5, "text": "删除是从前往后挪：把后面的元素依次盖到前一个位置上，最后 listSize 减 1。" },
-      { "anchor": "int indexOf(const T& theElement) const {", "span": 5, "text": "顺序查找：最好 Θ(1)、最坏 Θ(n)、平均 Θ(n)。这是数组描述无法避免的。" }
+      {
+        "anchor": "insert(theIndex, x) 把 x 插到",
+        "span": 3,
+        "text": "注意下标语义：insert(2, x) 之后 x 的下标就是 2，原来的元素整体后移。这就是课件里「theIndex 是最终下标」的约定。"
+      },
+      {
+        "anchor": "void insert(int theIndex, const T& theElement) {",
+        "span": 6,
+        "text": "三个动作：检查下标 → 空间不够就扩容 → 从后往前挪出空位。顺序不能反。"
+      },
+      {
+        "anchor": "for (int i = listSize - 1; i >= theIndex; i--) // 从后往前挪",
+        "span": 2,
+        "text": "必须从后往前。若从前往后，前一个会覆盖后一个，数据就毁了。"
+      },
+      {
+        "anchor": "changeLength1D(element, arrayLength, 2 * arrayLength);",
+        "span": 1,
+        "text": "数组满了要整体搬到两倍大的新数组，这一步是 Θ(n)，但摊还到每次插入上仍接近 Θ(1)。"
+      },
+      {
+        "anchor": "void erase(int theIndex) {",
+        "span": 5,
+        "text": "删除是从前往后挪：把后面的元素依次盖到前一个位置上，最后 listSize 减 1。"
+      },
+      {
+        "anchor": "int indexOf(const T& theElement) const {",
+        "span": 5,
+        "text": "顺序查找：最好 Θ(1)、最坏 Θ(n)、平均 Θ(n)。这是数组描述无法避免的。"
+      }
     ],
     "pitfalls": [
       "插入的合法下标是 [0, listSize]（可以插到末尾之后），删除是 [0, listSize-1]，差一个。",
@@ -21,7 +45,9 @@
       "扩容用 new 之后忘了 delete 旧数组，内存泄漏。",
       "insert 之后忘记 listSize++，或者 erase 之后忘记 listSize--。"
     ],
-    "relatedKnowledge": ["seqlist"]
+    "relatedKnowledge": [
+      "seqlist"
+    ]
   },
   {
     "id": "chain",
@@ -32,13 +58,41 @@
     "purpose": "课件第 1 章 P26~P31。链表题的基本骨架，考试默写从这里开始。",
     "file": "code/chain.cpp",
     "explanations": [
-      { "anchor": "template<class T> class Chain;      // 前向声明", "span": 1, "text": "ChainNode 要用 Chain 做友元，所以先声明 Chain。这是 C++ 模板里一个绕不开的细节。" },
-      { "anchor": "class ChainNode {", "span": 9, "text": "结点只有两个成员：data（数据域）和 next（链接域）。friend 让 Chain 能直接改这两个私有成员。" },
-      { "anchor": "T& get(int theIndex) const {", "span": 5, "text": "链表没有「地址计算」，只能从头一步一步走 theIndex 步，所以是 Θ(theIndex)。这是链表相对数组最大的劣势。" },
-      { "anchor": "void erase(int theIndex) {", "span": 6, "text": "删除分两种情况：删首结点（没有前驱，单独处理）和删中间结点（先找前驱，再越过它）。" },
-      { "anchor": "for (int i = 0; i < theIndex - 1; i++)", "span": 2, "text": "走 theIndex-1 步让 p 停在待删结点的前驱上。这三步是重点：找到前驱、改前驱的 next、释放被删结点。" },
-      { "anchor": "void insert(int theIndex, const T& theElement) {", "span": 8, "text": "插入同样分首结点和中间：插在表头就是 new 一个结点并把 firstNode 指过去；否则改前驱的 next。" },
-      { "anchor": "Chain<T>::~Chain() {", "span": 8, "text": "析构必须逐结点 delete，否则整条链表的内存都泄漏。注意先用 next 存住下一个结点，再 delete 当前结点。" }
+      {
+        "anchor": "template<class T> class Chain;      // 前向声明",
+        "span": 1,
+        "text": "ChainNode 要用 Chain 做友元，所以先声明 Chain。这是 C++ 模板里一个绕不开的细节。"
+      },
+      {
+        "anchor": "class ChainNode {",
+        "span": 9,
+        "text": "结点只有两个成员：data（数据域）和 next（链接域）。friend 让 Chain 能直接改这两个私有成员。"
+      },
+      {
+        "anchor": "T& get(int theIndex) const {",
+        "span": 5,
+        "text": "链表没有「地址计算」，只能从头一步一步走 theIndex 步，所以是 Θ(theIndex)。这是链表相对数组最大的劣势。"
+      },
+      {
+        "anchor": "void erase(int theIndex) {",
+        "span": 6,
+        "text": "删除分两种情况：删首结点（没有前驱，单独处理）和删中间结点（先找前驱，再越过它）。"
+      },
+      {
+        "anchor": "for (int i = 0; i < theIndex - 1; i++)",
+        "span": 2,
+        "text": "走 theIndex-1 步让 p 停在待删结点的前驱上。这三步是重点：找到前驱、改前驱的 next、释放被删结点。"
+      },
+      {
+        "anchor": "void insert(int theIndex, const T& theElement) {",
+        "span": 8,
+        "text": "插入同样分首结点和中间：插在表头就是 new 一个结点并把 firstNode 指过去；否则改前驱的 next。"
+      },
+      {
+        "anchor": "Chain<T>::~Chain() {",
+        "span": 8,
+        "text": "析构必须逐结点 delete，否则整条链表的内存都泄漏。注意先用 next 存住下一个结点，再 delete 当前结点。"
+      }
     ],
     "pitfalls": [
       "erase 里先 p->next = p->next->next 再 delete，顺序反了就找不到要删的结点了（要先保存 deleteNode）。",
@@ -46,7 +100,9 @@
       "遍历条件写成 p->next != 0，最后一个结点会被漏掉，应该写 p != 0。",
       "析构里直接 delete firstNode，后面的结点全泄漏。"
     ],
-    "relatedKnowledge": ["linkedlist"]
+    "relatedKnowledge": [
+      "linkedlist"
+    ]
   },
   {
     "id": "circular-doubly",
@@ -57,17 +113,35 @@
     "purpose": "课件第 1 章 P33~P37。考「用循环链表解约瑟夫」和「双向链表插入要改几个指针」时用这一份。",
     "file": "code/circular-doubly.cpp",
     "explanations": [
-      { "anchor": "void insert(const T& x) {", "span": 11, "text": "循环链表只记尾指针 rear：空表时自己指自己；非空时新结点接到 rear 后面，再让 rear 前移。这样头尾访问都是 Θ(1)。" },
-      { "anchor": "void josephus(int n, int m) {", "span": 10, "text": "外层 n 轮、内层每轮走 m-1 步，所以是 Θ(mn)。出列时要让前驱越过 p，再从下一个人继续。" },
-      { "anchor": "void insertAfter(DNode<T>* p, DNode<T>* s) {", "span": 6, "text": "双向链表插入要改四个指针，顺序只有一种是对的：先接后面的两个，最后改 p->next。否则就找不到原后继了。" },
-      { "anchor": "void eraseNode(DNode<T>* p) {", "span": 5, "text": "双向链表删除已知结点是 Θ(1)：不用再找前驱，让前驱和后继互相指过去即可。" }
+      {
+        "anchor": "void insert(const T& x) {",
+        "span": 11,
+        "text": "循环链表只记尾指针 rear：空表时自己指自己；非空时新结点接到 rear 后面，再让 rear 前移。这样头尾访问都是 Θ(1)。"
+      },
+      {
+        "anchor": "void josephus(int n, int m) {",
+        "span": 10,
+        "text": "外层 n 轮、内层每轮走 m-1 步，所以是 Θ(mn)。出列时要让前驱越过 p，再从下一个人继续。"
+      },
+      {
+        "anchor": "void insertAfter(DNode<T>* p, DNode<T>* s) {",
+        "span": 6,
+        "text": "双向链表插入要改四个指针，顺序只有一种是对的：先接后面的两个，最后改 p->next。否则就找不到原后继了。"
+      },
+      {
+        "anchor": "void eraseNode(DNode<T>* p) {",
+        "span": 5,
+        "text": "双向链表删除已知结点是 Θ(1)：不用再找前驱，让前驱和后继互相指过去即可。"
+      }
     ],
     "pitfalls": [
       "循环链表的判空是 rear == 0（尾指针表示）或 head->next == head（头结点表示），别用 == NULL 判 head->next。",
       "约瑟夫环里删除结点后忘记把 p 指向 pre->next，会访问到已释放的内存。",
       "双向链表插入时先改了 p->next，导致找不到原后继，② 那一步失效。"
     ],
-    "relatedKnowledge": ["circular"]
+    "relatedKnowledge": [
+      "circular"
+    ]
   },
   {
     "id": "indirect",
@@ -78,16 +152,74 @@
     "purpose": "课件第 1 章 P43~P51。期末选择题常问「间接寻址相比数组和链表分别好在哪」。",
     "file": "code/indirect.cpp",
     "explanations": [
-      { "anchor": "T** table;     // 指针数组（目录）", "span": 1, "text": "这是间接寻址的核心：table 里存的是元素的地址，不是元素本身。所以挪动 table 里的指针就等于挪动元素顺序。" },
-      { "anchor": "bool find(int k, T& x) const {", "span": 5, "text": "定位只要一次数组寻址 + 一次解引用，Θ(1)，和顺序表一样快。" },
-      { "anchor": "bool erase(int k, T& x) {", "span": 8, "text": "删除时元素本身不用搬，只把后面的指针往前挪一格：Θ(length - k)。比数组描述省掉了搬运元素的开销。" },
-      { "anchor": "for (int i = length - 1; i >= k; i--)", "span": 2, "text": "插入同理：指针整体后移一格，再把新元素的地址放进空出来的位置。" }
+      {
+        "anchor": "T** table;     // 指针数组（目录）",
+        "span": 1,
+        "text": "这是间接寻址的核心：table 里存的是元素的地址，不是元素本身。所以挪动 table 里的指针就等于挪动元素顺序。"
+      },
+      {
+        "anchor": "bool find(int k, T& x) const {",
+        "span": 5,
+        "text": "定位只要一次数组寻址 + 一次解引用，Θ(1)，和顺序表一样快。"
+      },
+      {
+        "anchor": "bool erase(int k, T& x) {",
+        "span": 8,
+        "text": "删除时元素本身不用搬，只把后面的指针往前挪一格：Θ(length - k)。比数组描述省掉了搬运元素的开销。"
+      },
+      {
+        "anchor": "for (int i = length - 1; i >= k; i--)",
+        "span": 2,
+        "text": "插入同理：指针整体后移一格，再把新元素的地址放进空出来的位置。"
+      }
     ],
     "pitfalls": [
       "析构时既要 delete 每个元素，也要 delete[] table，两步都不能少。",
       "table 的容量是固定的，满了要扩容（课件里直接抛 NoMem）。",
       "别把 table[i] 当成元素值，它是指针，取值要写 *table[i]。"
     ],
-    "relatedKnowledge": ["indirect", "summary"]
+    "relatedKnowledge": [
+      "indirect",
+      "summary"
+    ]
+  },
+  {
+    "id": "binsort",
+    "title": "箱子排序：链表应用（稳定）",
+    "lang": "cpp",
+    "level": "exam",
+    "summary": "课件 P58~P63：按关键字把结点分到箱子尾部，再按箱号收集，O(n + range)。",
+    "purpose": "期末问「箱子排序为什么是稳定的 / 复杂度为什么能到线性」时，用这一份代码回答。",
+    "file": "code/binsort.cpp",
+    "explanations": [
+      {
+        "anchor": "vector<Node*> bottom(range + 1, (Node*)0);",
+        "span": 2,
+        "text": "bottom/top 两个指针数组就是课件的优化版：每个箱子记住头和尾，挂结点才是 Θ(1)，不用每次走到表尾。"
+      },
+      {
+        "anchor": "for (Node* p = first; p != 0; ) {",
+        "span": 4,
+        "text": "分发阶段：先把 next 存住（p 马上要被摘走），再把 p->next 置空，避免新旧链纠缠。"
+      },
+      {
+        "anchor": "top[b]->next = p;",
+        "span": 2,
+        "text": "挂到箱子【尾部】而不是头部，这就是稳定性的来源：同关键字的结点保持输入顺序。"
+      },
+      {
+        "anchor": "for (int b = 0; b <= range; b++) {",
+        "span": 4,
+        "text": "收集阶段：按箱号从小到大把箱子串起来。这一步是 Θ(range)，所以总复杂度是 Θ(n + range)，别漏掉 range。"
+      }
+    ],
+    "pitfalls": [
+      "把结点挂到箱子头部会破坏稳定性（同关键字变成倒序）。",
+      "收集完忘记把最后一个箱子的尾结点 next 置空。",
+      "复杂度写成 Θ(n)——漏了遍历箱子的 Θ(range)。"
+    ],
+    "relatedKnowledge": [
+      "binsort"
+    ]
   }
 ]

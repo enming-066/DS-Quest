@@ -165,10 +165,9 @@ function toggleTemplate(id) {
             <div class="grow">
               <div class="row wrap" style="gap: 8px">
                 <h3>{{ tpl.title }}</h3>
-                <span class="chip" :class="tpl.lang === 'c' ? 'chip-warn' : 'chip-accent'">
-                  {{ tpl.lang === 'c' ? 'C 语言' : 'C++' }}
-                </span>
-                <span v-if="tpl.level === 'exam'" class="chip chip-success">考点模板</span>
+                <span class="chip chip-accent">C++</span>
+                <span v-if="tpl.level === 'extra'" class="chip chip-lock">拓展</span>
+                <span v-else-if="tpl.level === 'exam'" class="chip chip-success">考点模板</span>
                 <span v-else class="chip">核心模板</span>
               </div>
               <p>{{ tpl.summary }}</p>
@@ -215,6 +214,9 @@ function toggleTemplate(id) {
             <div class="row wrap" style="gap: 8px">
               <h3>{{ p.title }}</h3>
               <span class="stars">{{ difficulty(p.difficulty) }}</span>
+              <span v-if="p.optional" class="chip chip-lock" title="课件未涉及，不计入章节进度">
+                拓展
+              </span>
             </div>
             <p>{{ p.summary }}</p>
             <div class="know-tags">

@@ -110,6 +110,40 @@
     ]
   },
   {
+    "id": "linkqueue",
+    "title": "链队列：front / rear 双指针",
+    "lang": "cpp",
+    "level": "core",
+    "summary": "课件里的 LinkedQueue：入队接表尾、出队删首结点，两个指针保证都是 Θ(1)。",
+    "purpose": "期末问「链队列为什么要两个指针」「删除最后一个元素时要注意什么」时用这一份。",
+    "file": "code/linkqueue.cpp",
+    "explanations": [
+      {
+        "anchor": "void Add(const T& x) {",
+        "span": 6,
+        "text": "入队接在表尾：rear->next = p; rear = p。如果队列本来是空的，front 和 rear 都要指向新结点。"
+      },
+      {
+        "anchor": "void Delete(T& x) {",
+        "span": 8,
+        "text": "出队删第一个结点，注意最后那个 if：删完如果 front 变空了，rear 也必须归零，否则 rear 成了悬空指针。"
+      },
+      {
+        "anchor": "if (front == 0) rear = 0;",
+        "span": 1,
+        "text": "这一行是链队列最容易被漏掉的细节，也是考试最爱填的空。"
+      }
+    ],
+    "pitfalls": [
+      "删除最后一个结点后忘记让 rear = 0，下次入队会写到已释放的内存。",
+      "空队列判断写成 front->next == 0（这是带头结点的写法），本实现无头结点应该判 front == 0。",
+      "析构时逐个 delete，别只删 front。"
+    ],
+    "relatedKnowledge": [
+      "link-queue"
+    ]
+  },
+  {
     "id": "bracket",
     "title": "括号匹配",
     "lang": "cpp",

@@ -63,5 +63,7 @@
     "summary",
     "linkedlist"
   ],
-  "timeLimitMs": 2000
+  "timeLimitMs": 2000,
+  "optional": true,
+  "optionalReason": "课件未讲，期末可能考，保留作拓展"
 }

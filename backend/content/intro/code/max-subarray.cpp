@@ -40,13 +40,41 @@ int Kadane(const int a[], int n) {
     return best;
 }
 
+// ④ 分治：O(n log n)，课件第 0 章 P73 的 Algorithm 3
+// 最大子段要么全在左半边、要么全在右半边、要么跨过中点
+int MaxCrossing(const int a[], int left, int mid, int right) {
+    int leftSum = -1000000000, sum = 0;
+    for (int i = mid; i >= left; i--) {          // 从中点往左扫
+        sum += a[i];
+        if (sum > leftSum) leftSum = sum;
+    }
+    int rightSum = -1000000000;
+    sum = 0;
+    for (int i = mid + 1; i <= right; i++) {     // 从中点往右扫
+        sum += a[i];
+        if (sum > rightSum) rightSum = sum;
+    }
+    return leftSum + rightSum;
+}
+
+int DivideConquer(const int a[], int left, int right) {
+    if (left == right) return a[left];           // 只剩一个元素
+    int mid = (left + right) / 2;
+    int bestLeft = DivideConquer(a, left, mid);
+    int bestRight = DivideConquer(a, mid + 1, right);
+    int bestCross = MaxCrossing(a, left, mid, right);
+    int best = bestLeft > bestRight ? bestLeft : bestRight;
+    return best > bestCross ? best : bestCross;
+}
+
 int main() {
     int a[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
     int n = 9;
     cout << "O(n^3) ：" << BruteForce3(a, n) << "\n";
     cout << "O(n^2) ：" << BruteForce2(a, n) << "\n";
+    cout << "O(nlogn)：" << DivideConquer(a, 0, n - 1) << "\n";
     cout << "O(n)   ：" << Kadane(a, n) << "\n";
-    // 三者都应该是 6（子段 4 -1 2 1）
+    // 四者都应该是 6（子段 4 -1 2 1）
 
     int allNegative[] = {-5, -3, -9};
     cout << "全负数：" << Kadane(allNegative, 3) << "\n";   // -3

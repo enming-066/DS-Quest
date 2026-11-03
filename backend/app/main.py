@@ -93,7 +93,8 @@ def _module_summary(module: dict[str, Any], progress: dict[str, Any]) -> dict[st
     read = set(progress.get("knowledgeRead", []))
     knowledge_total = len(module["knowledge"])
     knowledge_done = sum(1 for k in module["knowledge"] if f"{module['id']}/{k['id']}" in read)
-    problem_ids = [p["id"] for p in module["problemRefs"]]
+    # 拓展题不计入章节进度（课件不要求，不应当影响「通关」判定）
+    problem_ids = [p["id"] for p in module["problemRefs"] if not p.get("optional")]
     problem_done = sum(1 for pid in problem_ids if pid in solved)
     problem_total = len(problem_ids)
     units_total = knowledge_total + problem_total
@@ -181,7 +182,7 @@ def _award(problem: dict[str, Any], progress: dict[str, Any], result: dict[str, 
 
         module = library.module(problem.get("moduleId", ""))
         if module and module["id"] not in progress.get("moduleCleared", []):
-            all_ids = {p["id"] for p in module["problemRefs"]}
+            all_ids = {p["id"] for p in module["problemRefs"] if not p.get("optional")}
             read = set(progress.get("knowledgeRead", []))
             all_read = all(f"{module['id']}/{k['id']}" in read for k in module["knowledge"])
             if all_ids and all_ids.issubset(solved) and all_read:

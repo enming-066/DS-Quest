@@ -149,6 +149,7 @@ class ContentLibrary:
                         "tags": problem.get("tags", []),
                         "summary": problem.get("summary", ""),
                         "knowledgeIds": problem.get("knowledgeIds", []),
+                        "optional": bool(problem.get("optional", False)),
                     }
                 )
 

@@ -1,0 +1,41 @@
+{
+  "id": "in-04",
+  "title": "Horner 算法求多项式值",
+  "difficulty": 2,
+  "tags": ["算法分析", "Horner", "操作计数"],
+  "summary": "课件里的多项式求值优化：把 O(n²) 次乘法压到 n 次。",
+  "statement": "给定一个 n 次多项式的系数和 x 的取值，求多项式的值：\n\n```\na[n]·xⁿ + a[n-1]·xⁿ⁻¹ + … + a[1]·x + a[0]\n```\n\n请用 **Horner 算法**（秦九韶算法）计算：从最高次项开始，每次做 `result = result * x + a[i]`。\n\n这样只需要 n 次乘法，而逐项计算 x 的幂再乘系数需要 O(n²) 次乘法（课件第 0 章 P39~P40 的对比）。\n\n> 提示：判题只看结果，但请真的按 Horner 写一遍，期末问「Horner 为什么快」你要能答出来。",
+  "inputFormat": "第一行一个整数 n（0 ≤ n ≤ 10）。\n第二行 n+1 个整数，依次是 a[0], a[1], …, a[n]。\n第三行一个整数 x。",
+  "outputFormat": "一行，多项式的值。",
+  "constraints": "0 ≤ n ≤ 10，|a[i]| ≤ 100，|x| ≤ 10。结果不会超过 64 位整数范围。",
+  "samples": [
+    {
+      "input": "3\n-5 4 -3 2\n3\n",
+      "output": "34\n",
+      "explain": "2x³ - 3x² + 4x - 5 在 x=3 时：54 - 27 + 12 - 5 = 34。Horner 的过程是 ((2*3-3)*3+4)*3-5。"
+    },
+    {
+      "input": "0\n7\n5\n",
+      "output": "7\n",
+      "explain": "0 次多项式就是常数项本身，x 取什么都不影响。"
+    }
+  ],
+  "hints": [
+    "把多项式改写成嵌套形式：(((a[n]·x + a[n-1])·x + a[n-2])·x + …)·x + a[0]。",
+    "从 result = a[n] 开始，让 i 从 n-1 递减到 0，每次 result = result * x + a[i]。",
+    "循环只跑 n 次，每次一次乘法一次加法，所以是 Θ(n)。",
+    "结果可能很大，用 long long。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    long long a[15];\n    for (int i = 0; i <= n; i++) cin >> a[i];\n    long long x;\n    cin >> x;\n\n    // TODO: 用 Horner 算法计算\n\n    return 0;\n}\n",
+  "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    long long a[15];\n    for (int i = 0; i <= n; i++) cin >> a[i];\n    long long x;\n    cin >> x;\n\n    long long result = a[n];\n    for (int i = n - 1; i >= 0; i--) {\n        result = result * x + a[i];\n    }\n    cout << result << \"\\n\";\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例：三次多项式", "input": "3\n-5 4 -3 2\n3\n", "output": "34\n" },
+    { "name": "常数项", "input": "0\n7\n5\n", "output": "7\n" },
+    { "name": "一次多项式", "input": "1\n1 2\n10\n", "output": "21\n" },
+    { "name": "负的 x", "input": "2\n0 0 1\n-2\n", "output": "4\n" },
+    { "name": "系数全 1", "input": "10\n1 1 1 1 1 1 1 1 1 1 1\n1\n", "output": "11\n" },
+    { "name": "含负系数", "input": "2\n1 -3 2\n2\n", "output": "3\n" }
+  ],
+  "knowledgeIds": ["steps"],
+  "timeLimitMs": 2000
+}

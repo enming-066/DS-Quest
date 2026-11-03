@@ -1,0 +1,36 @@
+{
+  "id": "ll-07",
+  "title": "箱子排序（稳定版）",
+  "difficulty": 3,
+  "tags": ["线性表", "箱子排序", "稳定性"],
+  "summary": "课件 P58~P63 的链表应用：按关键字把小整数分箱，再按箱号收集。",
+  "statement": "给定 n 个结点，每个结点有一个关键字 key（0 ≤ key ≤ 1000）和一个编号 id。\n\n要求用**箱子排序**（计数排序的链表版）把它们按 key 升序排名，输出排好序的 id 序列。\n\n**关键要求：排序必须是稳定的**——key 相同的结点，编号小的（即输入更早的）排在前。\n\n> 对应课件第 1 章 P58~P63。判题只看输出，但请真的按「分发到箱子尾部 → 按箱号收集」来做，这正是稳定的来源。",
+  "inputFormat": "第一行一个整数 n（1 ≤ n ≤ 100000）。\n接下来 n 行，每行两个整数 key 和 id（0 ≤ key ≤ 1000，id 互不相同）。",
+  "outputFormat": "一行，n 个 id，按排序后的顺序用空格分隔。",
+  "constraints": "1 ≤ n ≤ 100000，0 ≤ key ≤ 1000，id 互不相同。",
+  "maxN": 100000,
+  "samples": [
+    {
+      "input": "5\n2 1\n1 2\n2 3\n0 4\n1 5\n",
+      "output": "4 2 5 1 3\n",
+      "explain": "按 key 分箱：箱0 是 id4，箱1 是 id2、id5，箱2 是 id1、id3。同 key 内保持输入顺序，所以是 4 2 5 1 3。"
+    }
+  ],
+  "hints": [
+    "开 1001 个桶，每个桶记录「这个关键字出现了哪些 id」，按输入顺序往里放。",
+    "如果每个桶用数组存，把 id 按输入顺序 append 到对应桶的末尾，读取时自然就是稳定的。",
+    "最后从 0 号桶扫到 1000 号桶，依次输出桶里的 id，就是答案。",
+    "时间复杂度 O(n + range)，range = 1001，完全可以接受。"
+  ],
+  "starterCode": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nconst int RANGE = 1001;\nvector<int> bucket[RANGE];\n\nint main() {\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        int key, id;\n        cin >> key >> id;\n        // TODO: 把 id 按输入顺序放进对应的桶\n    }\n\n    // TODO: 从 0 号桶扫到 1000 号桶，依次输出\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nconst int RANGE = 1001;\nvector<int> bucket[RANGE];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    if (!(cin >> n)) return 0;\n\n    for (int i = 0; i < n; i++) {\n        int key, id;\n        cin >> key >> id;\n        bucket[key].push_back(id);   // 按输入顺序追加 → 稳定\n    }\n\n    bool first = true;\n    for (int k = 0; k < RANGE; k++) {\n        for (int id : bucket[k]) {\n            if (!first) cout << ' ';\n            cout << id;\n            first = false;\n        }\n    }\n    cout << \"\\n\";\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例：含重复关键字", "input": "5\n2 1\n1 2\n2 3\n0 4\n1 5\n", "output": "4 2 5 1 3\n" },
+    { "name": "全部同关键字", "input": "4\n7 10\n7 20\n7 30\n7 40\n", "output": "10 20 30 40\n" },
+    { "name": "只有一个", "input": "1\n500 99\n", "output": "99\n" },
+    { "name": "逆序输入", "input": "4\n3 1\n2 2\n1 3\n0 4\n", "output": "4 3 2 1\n" },
+    { "name": "稳定性检查", "input": "6\n1 6\n0 5\n1 4\n0 3\n1 2\n0 1\n", "output": "5 3 1 6 4 2\n" }
+  ],
+  "knowledgeIds": ["binsort"],
+  "timeLimitMs": 2000
+}
