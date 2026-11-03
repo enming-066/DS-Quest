@@ -1,0 +1,40 @@
+{
+  "id": "qu-02",
+  "title": "约瑟夫环（队列模拟）",
+  "difficulty": 2,
+  "tags": ["队列", "模拟", "循环"],
+  "summary": "n 个人围成圈报数，报到 m 的出列，用队列模拟最直观。",
+  "statement": "n 个人围成一圈，编号 1 到 n。从 1 号开始报数，报到 m 的人出列，下一个人重新从 1 开始报数，直到所有人出列。\n\n请输出出列的顺序。\n\n提示：用队列模拟——把队头的人移到队尾，表示跳过一个人；数到第 m 个时直接出队并输出。",
+  "inputFormat": "一行两个整数 n 和 m。",
+  "outputFormat": "一行，n 个整数，表示出列顺序，空格分隔。",
+  "constraints": "1 ≤ n ≤ 10000，1 ≤ m ≤ 10000。",
+  "maxN": 10000,
+  "samples": [
+    {
+      "input": "7 3\n",
+      "output": "3 6 2 7 5 1 4\n",
+      "explain": "1 2 3 → 出 3；4 5 6 → 出 6；7 1 2 → 出 2；4 5 7 → 出 7；1 4 5 → 出 5；1 4 1 → 出 1；剩 4。"
+    },
+    {
+      "input": "5 1\n",
+      "output": "1 2 3 4 5\n",
+      "explain": "m = 1 时每次都直接出队头。"
+    }
+  ],
+  "hints": [
+    "把 1..n 依次入队。",
+    "每轮：把队头移到队尾，重复 m-1 次（表示前 m-1 个人安全通过）；然后队头就是该出列的人。",
+    "可以用 STL 的 queue<int>，也可以手写循环队列——手写更贴近课本。"
+  ],
+  "starterCode": "#include <iostream>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    queue<int> q;\n    for (int i = 1; i <= n; i++) q.push(i);\n\n    // TODO: 模拟报数出列\n\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m;\n    if (!(cin >> n >> m)) return 0;\n    queue<int> q;\n    for (int i = 1; i <= n; i++) q.push(i);\n\n    bool first = true;\n    while (!q.empty()) {\n        for (int i = 1; i < m; i++) {   // 前 m-1 个人移到队尾\n            q.push(q.front());\n            q.pop();\n        }\n        if (!first) cout << ' ';\n        cout << q.front();              // 第 m 个人出列\n        q.pop();\n        first = false;\n    }\n    cout << \"\\n\";\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：n=7 m=3", "input": "7 3\n", "output": "3 6 2 7 5 1 4\n" },
+    { "name": "m=1 直接出队", "input": "5 1\n", "output": "1 2 3 4 5\n" },
+    { "name": "只有一个人", "input": "1 5\n", "output": "1\n" },
+    { "name": "两个人", "input": "2 2\n", "output": "2 1\n" },
+    { "name": "m 比 n 大", "input": "3 5\n", "output": "2 3 1\n" }
+  ],
+  "knowledgeIds": ["queue-concept"],
+  "timeLimitMs": 2000
+}

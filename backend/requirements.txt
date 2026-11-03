@@ -1,0 +1,3 @@
+# 后端依赖（安装到 backend/vendor，不污染系统 Python）
+fastapi>=0.115
+uvicorn>=0.30

@@ -1,0 +1,41 @@
+{
+  "id": "ll-04",
+  "title": "删除链表中所有值为 x 的结点",
+  "difficulty": 2,
+  "tags": ["单链表", "删除", "前驱指针"],
+  "summary": "考的是用前驱的视角看链表：删头、删尾、全删都要正确。",
+  "statement": "用尾插法建立一个带头结点的单链表（n 个整数），然后删除**所有**数据域等于 x 的结点，输出删除后链表剩下的元素。\n\n如果没有剩下任何结点，输出 `empty`。\n\n要求：只遍历一遍链表，并且真正 `delete` 掉被删的结点。",
+  "inputFormat": "第一行一个整数 n（0 ≤ n ≤ 1000）。\n第二行 n 个整数。\n第三行一个整数 x。",
+  "outputFormat": "一行，剩下的元素空格分隔；空表输出 `empty`。",
+  "constraints": "-10^9 ≤ 元素, x ≤ 10^9。",
+  "maxN": 1000,
+  "samples": [
+    {
+      "input": "7\n1 2 3 2 4 2 5\n2\n",
+      "output": "1 3 4 5\n",
+      "explain": "三个 2 都被删掉。注意链表现在是不连续的：1 → 3 → 4 → 5。"
+    },
+    {
+      "input": "3\n2 2 2\n2\n",
+      "output": "empty\n",
+      "explain": "全部删光，只剩头结点。"
+    }
+  ],
+  "hints": [
+    "删除某个结点必须知道它的**前驱**，因为要改 pre->next。",
+    "用一个 pre 指针跟着 p 走：p 是要检查的结点，pre 是它的前驱。",
+    "删掉 p 之后，p 要指向 pre->next（新的后继），不能写成 p = p->next，因为 p 已经被释放了。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nint main() {\n    int n;\n    cin >> n;\n    LinkList L = new LNode;\n    L->next = nullptr;\n    LNode *r = L;\n    for (int i = 0; i < n; i++) {\n        int x; cin >> x;\n        LNode *s = new LNode;\n        s->data = x; s->next = nullptr;\n        r->next = s; r = s;\n    }\n    int target;\n    cin >> target;\n\n    // TODO: pre 从头结点开始，p 从首元结点开始，遍历删除\n\n    return 0;\n}\n",
+  "solution": "// 参考解：前驱指针法，一遍扫描删除所有 x\n#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n\n    LinkList L = new LNode;\n    L->next = nullptr;\n    LNode *r = L;\n    for (int i = 0; i < n; i++) {\n        int v; cin >> v;\n        LNode *s = new LNode;\n        s->data = v; s->next = nullptr;\n        r->next = s; r = s;\n    }\n\n    int target;\n    cin >> target;\n\n    LNode *pre = L, *p = L->next;\n    while (p != nullptr) {\n        if (p->data == target) {\n            pre->next = p->next;   // 越过 p\n            delete p;              // 释放\n            p = pre->next;         // 从新的后继继续\n        } else {\n            pre = p;\n            p = p->next;\n        }\n    }\n\n    if (L->next == nullptr) {\n        cout << \"empty\\n\";\n    } else {\n        for (LNode *q = L->next; q != nullptr; q = q->next) {\n            cout << q->data << (q->next == nullptr ? '\\n' : ' ');\n        }\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：删中间", "input": "7\n1 2 3 2 4 2 5\n2\n", "output": "1 3 4 5\n" },
+    { "name": "全部删光", "input": "3\n2 2 2\n2\n", "output": "empty\n" },
+    { "name": "删头结点后的第一个", "input": "5\n9 1 2 3 4\n9\n", "output": "1 2 3 4\n" },
+    { "name": "删最后一个", "input": "5\n1 2 3 4 9\n9\n", "output": "1 2 3 4\n" },
+    { "name": "x 不存在", "input": "4\n1 2 3 4\n100\n", "output": "1 2 3 4\n" },
+    { "name": "空表", "input": "0\n\n5\n", "output": "empty\n" }
+  ],
+  "knowledgeIds": ["linkedlist", "summary"],
+  "timeLimitMs": 2000
+}

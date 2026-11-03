@@ -1,0 +1,40 @@
+{
+  "id": "st-03",
+  "title": "进制转换（用栈实现）",
+  "difficulty": 1,
+  "tags": ["栈", "应用", "进制转换"],
+  "summary": "短除法求余数，余数倒序输出，正好用栈。",
+  "statement": "给定一个非负十进制整数 n 和一个进制 r（2 ≤ r ≤ 16），输出 n 的 r 进制表示。\n\n10~15 用大写字母 `A`~`F` 表示。\n\n要求用**栈**实现：每次取余入栈，最后逐个出栈输出。",
+  "inputFormat": "一行两个整数 n 和 r。",
+  "outputFormat": "一行，n 的 r 进制表示（不含前导零，n = 0 时输出 `0`）。",
+  "constraints": "0 ≤ n ≤ 2^31 - 1，2 ≤ r ≤ 16。",
+  "samples": [
+    {
+      "input": "255 16\n",
+      "output": "FF\n",
+      "explain": "255 = 15*16 + 15，所以是 FF。"
+    },
+    {
+      "input": "0 8\n",
+      "output": "0\n",
+      "explain": "0 要特判，否则循环一次都不进，什么也不输出。"
+    }
+  ],
+  "hints": [
+    "短除法：n % r 得到最低位，n /= r 继续，直到 n == 0。",
+    "余数是**从低位到高位**产生的，而输出要从高位到低位，所以用栈倒序。",
+    "n == 0 是边界，直接输出 0，别漏。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nint st[64], top = -1;\n\nint main() {\n    long long n;\n    int r;\n    cin >> n >> r;\n\n    // TODO: 短除法 + 栈\n\n    return 0;\n}\n",
+  "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    long long n;\n    int r;\n    if (!(cin >> n >> r)) return 0;\n\n    if (n == 0) { cout << \"0\\n\"; return 0; }\n\n    int st[64], top = -1;\n    while (n > 0) {\n        st[++top] = (int)(n % r);   // 余数入栈\n        n /= r;\n    }\n    const char *digits = \"0123456789ABCDEF\";\n    while (top >= 0) {\n        cout << digits[st[top--]];  // 倒序出栈\n    }\n    cout << \"\\n\";\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：16 进制", "input": "255 16\n", "output": "FF\n" },
+    { "name": "0 的特判", "input": "0 8\n", "output": "0\n" },
+    { "name": "转二进制", "input": "10 2\n", "output": "1010\n" },
+    { "name": "大数转 16 进制", "input": "1000000 16\n", "output": "F4240\n" },
+    { "name": "小于进制", "input": "7 8\n", "output": "7\n" },
+    { "name": "三进制", "input": "100 3\n", "output": "10201\n" }
+  ],
+  "knowledgeIds": ["stack-apps"],
+  "timeLimitMs": 2000
+}

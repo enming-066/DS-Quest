@@ -1,0 +1,38 @@
+{
+  "id": "st-05",
+  "title": "最小栈",
+  "difficulty": 3,
+  "tags": ["栈", "设计", "辅助栈"],
+  "summary": "在 O(1) 内取到栈中最小元素，需要再开一个辅助栈。",
+  "statement": "设计一个栈，支持以下操作，并且每个操作都是 O(1)：\n\n- `push x`：把 x 入栈\n- `pop`：弹出栈顶并输出它；栈空时输出 `error`\n- `top`：输出栈顶但不出栈；栈空输出 `error`\n- `getMin`：输出当前栈中的最小值；栈空输出 `error`\n\n`push` 不产生输出，其余三个操作各输出一行。",
+  "inputFormat": "第一行一个整数 m（1 ≤ m ≤ 100000），表示操作数。\n接下来 m 行，每行一个操作（格式见题目描述）。",
+  "outputFormat": "按操作顺序，每个 `pop` / `top` / `getMin` 输出一行结果。",
+  "constraints": "-10^9 ≤ x ≤ 10^9，1 ≤ m ≤ 100000。",
+  "samples": [
+    {
+      "input": "7\npush 5\npush 3\npush 7\ngetMin\ntop\npop\ngetMin\n",
+      "output": "3\n7\n7\n3\n",
+      "explain": "进 5、3、7 后最小值是 3；栈顶是 7；弹出 7 后最小值还是 3。"
+    },
+    {
+      "input": "2\npop\ngetMin\n",
+      "output": "error\nerror\n",
+      "explain": "空栈时 pop / getMin 都要输出 error。"
+    }
+  ],
+  "hints": [
+    "只用一个栈的话，取最小值要 O(n) 扫一遍，不满足要求。",
+    "开一个辅助栈 minStack，它的栈顶永远存\"当前栈里的最小值\"。",
+    "入栈时：x 也压入 minStack，但压的是 min(x, minStack.top())。出栈时两个栈一起弹。"
+  ],
+  "starterCode": "#include <iostream>\n#include <string>\n#include <stack>\nusing namespace std;\n\nint main() {\n    int m;\n    cin >> m;\n    stack<int> st, minSt;\n    while (m--) {\n        string op;\n        cin >> op;\n        // TODO: 处理四种操作\n    }\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <string>\n#include <stack>\nusing namespace std;\n\nint main() {\n    int m;\n    if (!(cin >> m)) return 0;\n    stack<long long> st, minSt;\n\n    while (m--) {\n        string op;\n        cin >> op;\n        if (op == \"push\") {\n            long long x;\n            cin >> x;\n            st.push(x);\n            if (minSt.empty()) minSt.push(x);\n            else minSt.push(min(x, minSt.top()));\n        } else if (op == \"pop\") {\n            if (st.empty()) { cout << \"error\\n\"; continue; }\n            cout << st.top() << \"\\n\";\n            st.pop();\n            minSt.pop();\n        } else if (op == \"top\") {\n            if (st.empty()) { cout << \"error\\n\"; continue; }\n            cout << st.top() << \"\\n\";\n        } else if (op == \"getMin\") {\n            if (st.empty()) { cout << \"error\\n\"; continue; }\n            cout << minSt.top() << \"\\n\";\n        }\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1", "input": "7\npush 5\npush 3\npush 7\ngetMin\ntop\npop\ngetMin\n", "output": "3\n7\n7\n3\n" },
+    { "name": "空栈操作", "input": "2\npop\ngetMin\n", "output": "error\nerror\n" },
+    { "name": "重复最小值", "input": "6\npush 2\npush 2\npop\ngetMin\npop\ngetMin\n", "output": "2\n2\n2\nerror\n" },
+    { "name": "负数", "input": "5\npush -5\npush -1\npush -9\ngetMin\npop\n", "output": "-9\n-9\n" }
+  ],
+  "knowledgeIds": ["stack-apps", "seq-stack"],
+  "timeLimitMs": 2000
+}

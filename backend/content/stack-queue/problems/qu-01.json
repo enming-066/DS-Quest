@@ -1,0 +1,33 @@
+{
+  "id": "qu-01",
+  "title": "循环队列的基本操作",
+  "difficulty": 2,
+  "tags": ["队列", "循环队列", "模拟"],
+  "summary": "用牺牲一个单元的方式实现循环队列，按操作输出结果。",
+  "statement": "实现一个循环队列，底层数组容量为 m。采用**牺牲一个存储单元**的方式判满，所以队列最多容纳 m-1 个元素。\n\n支持以下操作：\n\n- `enqueue x`：入队，队满时**静默丢弃**（不输出任何内容）\n- `dequeue`：出队并输出该元素；队空输出 `error`\n- `front`：输出队头元素但不出队；队空输出 `error`\n- `size`：输出当前元素个数\n\n`enqueue` 不产生输出，其余操作各输出一行。",
+  "inputFormat": "第一行两个整数 m 和 q（2 ≤ m ≤ 1000，1 ≤ q ≤ 100000），m 是数组容量，q 是操作数。\n接下来 q 行，每行一个操作。",
+  "outputFormat": "按操作顺序，每个 `dequeue` / `front` / `size` 输出一行。",
+  "constraints": "2 ≤ m ≤ 1000，1 ≤ q ≤ 100000，1 ≤ x ≤ 10^9。",
+  "samples": [
+    {
+      "input": "3 5\nenqueue 1\nenqueue 2\nsize\nfront\ndequeue\n",
+      "output": "2\n1\n1\n",
+      "explain": "容量 3 的循环队列最多存 2 个元素。入队 1、2 后 size 是 2，队头是 1，出队得到 1。"
+    }
+  ],
+  "hints": [
+    "rear 指向队尾元素的下一个位置，入队后 rear = (rear + 1) % m。",
+    "判满：(rear + 1) % m == front；判空：front == rear。",
+    "元素个数：(rear - front + m) % m。"
+  ],
+  "starterCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nconst int MAXM = 1005;\nint data[MAXM];\nint front = 0, rear = 0, m;\n\nint main() {\n    int q;\n    cin >> m >> q;\n    while (q--) {\n        string op;\n        cin >> op;\n        // TODO\n    }\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nconst int MAXM = 1005;\nint data[MAXM];\nint frontP = 0, rearP = 0, m;\n\nint main() {\n    int q;\n    if (!(cin >> m >> q)) return 0;\n\n    while (q--) {\n        string op;\n        cin >> op;\n        if (op == \"enqueue\") {\n            long long x; cin >> x;\n            if ((rearP + 1) % m != frontP) {   // 不满才入队\n                data[rearP] = (int)x;\n                rearP = (rearP + 1) % m;\n            }\n        } else if (op == \"dequeue\") {\n            if (frontP == rearP) { cout << \"error\\n\"; continue; }\n            cout << data[frontP] << \"\\n\";\n            frontP = (frontP + 1) % m;\n        } else if (op == \"front\") {\n            if (frontP == rearP) { cout << \"error\\n\"; continue; }\n            cout << data[frontP] << \"\\n\";\n        } else if (op == \"size\") {\n            cout << (rearP - frontP + m) % m << \"\\n\";\n        }\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1", "input": "3 5\nenqueue 1\nenqueue 2\nsize\nfront\ndequeue\n", "output": "2\n1\n1\n" },
+    { "name": "队满丢弃 + 绕回", "input": "3 8\nenqueue 1\nenqueue 2\nenqueue 3\ndequeue\nenqueue 3\nsize\nfront\ndequeue\n", "output": "1\n2\n2\n2\n" },
+    { "name": "空队列出队", "input": "2 3\ndequeue\nfront\nsize\n", "output": "error\nerror\n0\n" },
+    { "name": "反复进出", "input": "4 7\nenqueue 1\ndequeue\nenqueue 2\ndequeue\nenqueue 3\ndequeue\nsize\n", "output": "1\n2\n3\n0\n" }
+  ],
+  "knowledgeIds": ["circular-queue"],
+  "timeLimitMs": 2000
+}

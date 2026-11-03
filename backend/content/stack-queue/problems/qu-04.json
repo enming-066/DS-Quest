@@ -1,0 +1,40 @@
+{
+  "id": "qu-04",
+  "title": "迷宫最短路（BFS）",
+  "difficulty": 3,
+  "tags": ["队列", "BFS", "最短路"],
+  "summary": "0 可走 1 是墙，求左上角到右下角的最少步数，队列的经典应用。",
+  "statement": "给定一个 n 行 m 列的迷宫，`0` 表示可以走，`1` 表示墙。从左上角 `(1,1)` 出发，每次可以上下左右移动一格，求到达右下角 `(n,m)` 的最少步数。\n\n走不到输出 `-1`。起点就是终点时步数为 0。",
+  "inputFormat": "第一行两个整数 n 和 m。\n接下来 n 行，每行 m 个 0/1 字符（中间没有空格）。",
+  "outputFormat": "一个整数，最少步数；走不到输出 `-1`。",
+  "constraints": "1 ≤ n, m ≤ 1000，保证 (1,1) 和 (n,m) 都是 0。",
+  "maxN": 1000,
+  "samples": [
+    {
+      "input": "3 3\n000\n010\n000\n",
+      "output": "4\n",
+      "explain": "从 (1,1) 绕开中心的墙到 (3,3)，最少 4 步。"
+    },
+    {
+      "input": "2 2\n01\n10\n",
+      "output": "-1\n",
+      "explain": "被墙完全隔开，走不到。"
+    }
+  ],
+  "hints": [
+    "BFS 用队列：起点入队，距离记为 0。",
+    "每次从队头取出一个点，向四个方向扩展没走过的点，距离 = 当前距离 + 1，然后入队。",
+    "第一次访问到某个点时，它的距离就是最短距离——这是 BFS 按层扩展的性质。"
+  ],
+  "starterCode": "#include <iostream>\n#include <queue>\nusing namespace std;\n\nconst int MAXN = 1005;\nchar g[MAXN][MAXN];\nint dist[MAXN][MAXN];\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    for (int i = 0; i < n; i++) cin >> g[i];\n\n    // TODO: BFS\n\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <queue>\nusing namespace std;\n\nconst int MAXN = 1005;\nchar g[MAXN][MAXN];\nint dist[MAXN][MAXN];\nint dx[4] = {-1, 1, 0, 0};\nint dy[4] = {0, 0, -1, 1};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n, m;\n    if (!(cin >> n >> m)) return 0;\n    for (int i = 0; i < n; i++) cin >> g[i];\n\n    for (int i = 0; i < n; i++)\n        for (int j = 0; j < m; j++) dist[i][j] = -1;\n\n    queue<pair<int,int>> q;\n    q.push({0, 0});\n    dist[0][0] = 0;\n\n    while (!q.empty()) {\n        pair<int,int> cur = q.front();\n        int x = cur.first, y = cur.second;\n        q.pop();\n        if (x == n - 1 && y == m - 1) break;\n        for (int d = 0; d < 4; d++) {\n            int nx = x + dx[d], ny = y + dy[d];\n            if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;\n            if (g[nx][ny] == '1' || dist[nx][ny] != -1) continue;\n            dist[nx][ny] = dist[x][y] + 1;\n            q.push({nx, ny});\n        }\n    }\n    cout << dist[n - 1][m - 1] << \"\\n\";\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：绕开墙", "input": "3 3\n000\n010\n000\n", "output": "4\n" },
+    { "name": "样例 2：走不到", "input": "2 2\n01\n10\n", "output": "-1\n" },
+    { "name": "起点即终点", "input": "1 1\n0\n", "output": "0\n" },
+    { "name": "一条直路", "input": "1 5\n00000\n", "output": "4\n" },
+    { "name": "需要绕远", "input": "3 4\n0010\n0010\n0000\n", "output": "5\n" }
+  ],
+  "knowledgeIds": ["queue-apps"],
+  "timeLimitMs": 2000
+}

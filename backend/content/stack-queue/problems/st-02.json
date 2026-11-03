@@ -1,0 +1,43 @@
+{
+  "id": "st-02",
+  "title": "判断出栈序列是否合法",
+  "difficulty": 2,
+  "tags": ["栈", "出栈序列", "模拟"],
+  "summary": "入栈顺序 1..n，判断给定的出栈序列能不能实现。",
+  "statement": "元素 `1, 2, ..., n` 按从小到大的顺序依次入栈，中途可以随时出栈。给定一个排列，判断它能否成为合法的出栈序列。\n\n合法输出 `YES`，否则输出 `NO`。",
+  "inputFormat": "第一行一个整数 n（1 ≤ n ≤ 100000）。\n第二行 n 个整数，是一个 1..n 的排列。",
+  "outputFormat": "`YES` 或 `NO`。",
+  "constraints": "1 ≤ n ≤ 100000。",
+  "maxN": 100000,
+  "samples": [
+    {
+      "input": "3\n3 2 1\n",
+      "output": "YES\n",
+      "explain": "1、2、3 依次入栈，然后连续出栈三次，得到 3 2 1。"
+    },
+    {
+      "input": "3\n3 1 2\n",
+      "output": "NO\n",
+      "explain": "3 先出栈时，1 和 2 都在栈里且 2 在栈顶，所以下一个只能是 2，不可能是 1。"
+    }
+  ],
+  "hints": [
+    "模拟：按 1..n 依次入栈，每入一个就看看栈顶是不是出栈序列的当前元素。",
+    "是的话就一直弹出，直到栈顶不等于当前元素为止。",
+    "最后判断栈是否为空，并且序列是否已经全部匹配完。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nconst int MAXN = 100005;\nint out[MAXN], st[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> out[i];\n\n    // TODO: 模拟入栈出栈，输出 YES / NO\n\n    return 0;\n}\n",
+  "solution": "#include <iostream>\nusing namespace std;\n\nconst int MAXN = 100005;\nint out[MAXN], st[MAXN];\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    for (int i = 0; i < n; i++) cin >> out[i];\n\n    int top = -1, j = 0;\n    for (int i = 1; i <= n; i++) {\n        st[++top] = i;                       // 入栈\n        while (top >= 0 && st[top] == out[j]) {   // 能弹就弹\n            top--;\n            j++;\n        }\n    }\n    cout << (top < 0 && j == n ? \"YES\\n\" : \"NO\\n\");\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：完全逆序", "input": "3\n3 2 1\n", "output": "YES\n" },
+    { "name": "样例 2：不可能", "input": "3\n3 1 2\n", "output": "NO\n" },
+    { "name": "顺序出栈", "input": "5\n1 2 3 4 5\n", "output": "YES\n" },
+    { "name": "边入边出", "input": "4\n2 4 3 1\n", "output": "YES\n" },
+    { "name": "只有一个元素", "input": "1\n1\n", "output": "YES\n" },
+    { "name": "大数先出且小数逆序", "input": "5\n5 4 3 2 1\n", "output": "YES\n" },
+    { "name": "中间出栈", "input": "4\n3 4 2 1\n", "output": "YES\n" },
+    { "name": "不可能：大数先出后小数顺序", "input": "4\n4 2 3 1\n", "output": "NO\n" }
+  ],
+  "knowledgeIds": ["stack-apps"],
+  "timeLimitMs": 2000
+}

@@ -1,0 +1,41 @@
+{
+  "id": "ll-01",
+  "title": "顺序表插入",
+  "difficulty": 1,
+  "tags": ["顺序表", "插入", "位序"],
+  "summary": "把元素插到位序 pos 上，顺便处理非法位置。",
+  "statement": "给定一个长度为 n 的顺序表，再给定一个位序 pos 和一个整数 x，要求把 x 插入到第 pos 个位置，输出插入后的顺序表。\n\n**位序从 1 开始**：pos = 1 表示插在最前面，pos = n+1 表示插在最后面。\n\n如果 pos 不合法（pos < 1 或 pos > n+1），输出 `error`。",
+  "inputFormat": "第一行一个整数 n（0 ≤ n ≤ 100）。\n第二行 n 个整数，表示顺序表中的元素（n = 0 时这一行为空）。\n第三行两个整数 pos 和 x。",
+  "outputFormat": "插入成功：一行，插入后的所有元素，空格分隔。\n插入失败：一行 `error`。",
+  "constraints": "0 ≤ n ≤ 100，-1000 ≤ 元素, x ≤ 1000。",
+  "maxN": 100,
+  "samples": [
+    {
+      "input": "5\n1 2 3 4 5\n3 9\n",
+      "output": "1 2 9 3 4 5\n",
+      "explain": "在第 3 个位置插入 9，原来第 3 个元素 3 及其后面的元素整体后移。注意 9 的下标是 2，不是 3。"
+    },
+    {
+      "input": "3\n7 8 9\n0 1\n",
+      "output": "error\n",
+      "explain": "位序从 1 开始，pos = 0 非法。"
+    }
+  ],
+  "hints": [
+    "先想清楚位序 pos 对应数组的哪个下标：第 pos 个元素的下标是 pos-1。",
+    "插入的合法范围是 1 ≤ pos ≤ n+1，比删除多一个 n+1（插在表尾之后）。",
+    "移动元素必须从最后面开始，否则前面的值会覆盖后面的值。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nconst int MAXN = 105;\nint a[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> a[i];\n\n    int pos, x;\n    cin >> pos >> x;\n\n    // TODO: 判断 pos 是否合法，非法输出 error\n    // TODO: 合法则从后往前挪，把 x 放到下标 pos-1，然后输出\n\n    return 0;\n}\n",
+  "solution": "// 参考解：用一个数组 + 长度变量模拟顺序表\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    int a[105];\n    for (int i = 0; i < n; i++) cin >> a[i];\n    int pos, x;\n    cin >> pos >> x;\n\n    if (pos < 1 || pos > n + 1) {\n        cout << \"error\\n\";\n        return 0;\n    }\n    for (int j = n; j >= pos; j--) {   // 从后往前挪，腾出下标 pos-1\n        a[j] = a[j - 1];\n    }\n    a[pos - 1] = x;\n    n++;\n\n    for (int i = 0; i < n; i++) {\n        cout << a[i] << (i + 1 == n ? '\\n' : ' ');\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：插在中间", "input": "5\n1 2 3 4 5\n3 9\n", "output": "1 2 9 3 4 5\n" },
+    { "name": "插在最前面", "input": "5\n1 2 3 4 5\n1 0\n", "output": "0 1 2 3 4 5\n" },
+    { "name": "插在表尾之后", "input": "5\n1 2 3 4 5\n6 6\n", "output": "1 2 3 4 5 6\n" },
+    { "name": "pos 太小", "input": "3\n7 8 9\n0 1\n", "output": "error\n" },
+    { "name": "pos 太大", "input": "3\n7 8 9\n5 1\n", "output": "error\n" },
+    { "name": "只有一个元素", "input": "1\n42\n1 42\n", "output": "42 42\n" }
+  ],
+  "knowledgeIds": ["seqlist"],
+  "timeLimitMs": 2000
+}

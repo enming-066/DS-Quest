@@ -1,0 +1,39 @@
+{
+  "id": "ll-03",
+  "title": "尾插法建链表并遍历",
+  "difficulty": 1,
+  "tags": ["单链表", "尾插法", "遍历"],
+  "summary": "链表的第一道实操：把 n 个数依次接到表尾，再从头打印一遍。",
+  "statement": "读入 n 个整数，用**尾插法**建立一个带头结点的单链表，然后：\n\n1. 输出链表的长度；\n2. 从头到尾输出所有结点的数据。\n\n要求真的用链表（`new`/`malloc` 结点 + `next` 指针）来实现。判题只看输出，但如果你直接用数组做，这道题就白做了。\n\n如果 n = 0（空表），输出 `0`，第二行输出 `empty`。",
+  "inputFormat": "第一行一个整数 n（0 ≤ n ≤ 1000）。\n第二行 n 个整数（n = 0 时为空行）。",
+  "outputFormat": "第一行：链表长度。\n第二行：所有元素，空格分隔；空表输出 `empty`。",
+  "constraints": "-10^9 ≤ 元素 ≤ 10^9。",
+  "maxN": 1000,
+  "samples": [
+    {
+      "input": "5\n10 20 30 40 50\n",
+      "output": "5\n10 20 30 40 50\n",
+      "explain": "尾插法保持输入顺序，所以打印出来和输入一样。如果换成头插法，这里会输出 50 40 30 20 10。"
+    },
+    {
+      "input": "0\n",
+      "output": "0\nempty\n",
+      "explain": "空表：只有头结点，L->next == NULL。"
+    }
+  ],
+  "hints": [
+    "尾插法需要一个尾指针 r，它永远指向最后一个结点。",
+    "每插入一个新结点：r->next = s; r = s;，最后 r->next 已经是 NULL 就不用再管。",
+    "长度可以在建表时用计数器统计，也可以建完后遍历一遍数。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nint main() {\n    int n;\n    cin >> n;\n\n    LinkList L = new LNode;   // 头结点\n    L->next = nullptr;\n    LNode *r = L;             // 尾指针\n\n    // TODO: 循环读入 n 个数，尾插建表\n\n    // TODO: 输出长度和所有元素\n\n    return 0;\n}\n",
+  "solution": "// 参考解：尾插法建表 + 遍历输出\n#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n\n    LinkList L = new LNode;\n    L->next = nullptr;\n    LNode *r = L;\n    int len = 0;\n\n    for (int i = 0; i < n; i++) {\n        int x;\n        cin >> x;\n        LNode *s = new LNode;\n        s->data = x;\n        s->next = nullptr;\n        r->next = s;\n        r = s;\n        len++;\n    }\n\n    cout << len << \"\\n\";\n    if (L->next == nullptr) {\n        cout << \"empty\\n\";\n    } else {\n        int printed = 0;\n        for (LNode *p = L->next; p != nullptr; p = p->next) {\n            cout << p->data;\n            printed++;\n            cout << (printed == len ? '\\n' : ' ');\n        }\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：五个元素", "input": "5\n10 20 30 40 50\n", "output": "5\n10 20 30 40 50\n" },
+    { "name": "空表", "input": "0\n", "output": "0\nempty\n" },
+    { "name": "只有一个元素", "input": "1\n7\n", "output": "1\n7\n" },
+    { "name": "含负数和重复", "input": "6\n-1 0 -1 5 5 2\n", "output": "6\n-1 0 -1 5 5 2\n" }
+  ],
+  "knowledgeIds": ["linkedlist"],
+  "timeLimitMs": 2000
+}

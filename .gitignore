@@ -1,0 +1,24 @@
+# 依赖
+backend/vendor/
+frontend/node_modules/
+
+# 构建产物（换电脑跑 setup.bat 重新生成）
+frontend/dist/
+
+# 运行时数据：学习进度、错题、提交记录
+backend/data/
+
+# 本机配置与路径
+backend/.env
+backend/.python-path
+
+# 临时文件
+.tmp/
+*.log
+__pycache__/
+*.pyc
+
+# 编辑器
+.vscode/
+.idea/
+*.swp

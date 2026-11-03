@@ -1,0 +1,83 @@
+[
+  {
+    "id": "intro",
+    "order": 1,
+    "title": "绪论与算法复杂度",
+    "subtitle": "先学会衡量代码的好坏",
+    "description": "逻辑结构、存储结构、时间与空间复杂度分析。后面每一关都要用到这里的分析方法。",
+    "icon": "compass",
+    "color": "#64748b",
+    "status": "locked",
+    "estimatedMinutes": 0
+  },
+  {
+    "id": "linear-list",
+    "order": 2,
+    "title": "线性表",
+    "subtitle": "顺序表与链表，一切结构的起点",
+    "description": "从逻辑结构讲到两种存储方式：顺序表与链表。插入删除的指针操作、位序与下标的换算，是期末必考内容。",
+    "icon": "list",
+    "color": "#6366f1",
+    "status": "open"
+  },
+  {
+    "id": "stack-queue",
+    "order": 3,
+    "title": "栈与队列",
+    "subtitle": "只能在一端操作的线性表",
+    "description": "后进先出的栈与先进先出的队列，重点是顺序栈、循环队列的判空判满，以及括号匹配、出栈序列、BFS 这些经典应用。",
+    "icon": "stack",
+    "color": "#0ea5e9",
+    "status": "open"
+  },
+  {
+    "id": "string-array",
+    "order": 4,
+    "title": "串与数组",
+    "subtitle": "KMP 与特殊矩阵压缩",
+    "description": "串的模式匹配（KMP 的 next 数组）、特殊矩阵的压缩存储与下标换算。",
+    "icon": "grid",
+    "color": "#8b5cf6",
+    "status": "locked"
+  },
+  {
+    "id": "tree",
+    "order": 5,
+    "title": "树",
+    "subtitle": "二叉树、遍历与哈夫曼",
+    "description": "二叉树的定义与性质、四种遍历、线索二叉树、哈夫曼树与并查集。",
+    "icon": "tree",
+    "color": "#10b981",
+    "status": "locked"
+  },
+  {
+    "id": "graph",
+    "order": 6,
+    "title": "图",
+    "subtitle": "存储、遍历与最短路",
+    "description": "邻接矩阵与邻接表、DFS/BFS、Prim/Kruskal、Dijkstra/Floyd、拓扑排序。",
+    "icon": "graph",
+    "color": "#f59e0b",
+    "status": "locked"
+  },
+  {
+    "id": "search",
+    "order": 7,
+    "title": "查找",
+    "subtitle": "从二分到哈希",
+    "description": "顺序查找、折半查找、二叉排序树、平衡树、哈希表与冲突处理。",
+    "icon": "search",
+    "color": "#ef4444",
+    "status": "locked"
+  },
+  {
+    "id": "sort",
+    "order": 8,
+    "title": "排序",
+    "subtitle": "八大排序与稳定性",
+    "description": "插入、交换、选择、归并、基数排序的过程、复杂度与稳定性对比。",
+    "icon": "sort",
+    "color": "#ec4899",
+    "status": "locked"
+  }
+]

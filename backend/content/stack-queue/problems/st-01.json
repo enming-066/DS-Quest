@@ -1,0 +1,41 @@
+{
+  "id": "st-01",
+  "title": "括号匹配",
+  "difficulty": 1,
+  "tags": ["栈", "应用", "括号匹配"],
+  "summary": "左括号入栈，右括号比对栈顶，最后栈空才算匹配。",
+  "statement": "给定一行只由 `(` `)` `[` `]` `{` `}` 组成的字符串（长度可能为 0），判断里面的括号是否配对。\n\n配对的要求：\n1. 左右括号数量相等、类型一致；\n2. 嵌套顺序正确，不能交叉，例如 `([)]` 是不合法的。\n\n匹配输出 `YES`，否则输出 `NO`。",
+  "inputFormat": "一行字符串，可能为空行。",
+  "outputFormat": "`YES` 或 `NO`。",
+  "constraints": "字符串长度 ≤ 100000，只含六种括号字符。",
+  "samples": [
+    {
+      "input": "([{}])\n",
+      "output": "YES\n",
+      "explain": "完全嵌套且类型对应。"
+    },
+    {
+      "input": "([)]\n",
+      "output": "NO\n",
+      "explain": "交叉了：当读到 `)` 时栈顶是 `[`，类型不匹配。"
+    }
+  ],
+  "hints": [
+    "用一个栈：左括号一律入栈；右括号要和栈顶配对。",
+    "两种情况会失败：栈空时遇到右括号（右括号多了）、栈顶类型不对。",
+    "别忘了扫完之后栈必须是空的，否则说明左括号多了。"
+  ],
+  "starterCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    getline(cin, s);\n    // TODO: 用栈判断\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nchar st[100005];\nint top = -1;\n\nint main() {\n    string s;\n    getline(cin, s);\n\n    for (char c : s) {\n        if (c == '(' || c == '[' || c == '{') {\n            st[++top] = c;\n        } else if (c == ')' || c == ']' || c == '}') {\n            if (top < 0) { cout << \"NO\\n\"; return 0; }\n            char t = st[top];\n            bool ok = (c == ')' && t == '(') || (c == ']' && t == '[') || (c == '}' && t == '{');\n            if (!ok) { cout << \"NO\\n\"; return 0; }\n            top--;\n        }\n    }\n    cout << (top < 0 ? \"YES\\n\" : \"NO\\n\");\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：正确嵌套", "input": "([{}])\n", "output": "YES\n" },
+    { "name": "样例 2：交叉", "input": "([)]\n", "output": "NO\n" },
+    { "name": "成对", "input": "()\n", "output": "YES\n" },
+    { "name": "空串", "input": "\n", "output": "YES\n" },
+    { "name": "左括号多了", "input": "(((\n", "output": "NO\n" },
+    { "name": "右括号多了", "input": ")))\n", "output": "NO\n" },
+    { "name": "长串", "input": "{[]([]){}}{}\n", "output": "YES\n" }
+  ],
+  "knowledgeIds": ["stack-apps"],
+  "timeLimitMs": 2000
+}

@@ -1,0 +1,41 @@
+{
+  "id": "st-04",
+  "title": "后缀表达式求值",
+  "difficulty": 3,
+  "tags": ["栈", "应用", "表达式求值"],
+  "summary": "遇到数字压栈，遇到运算符弹两个数计算再压回。",
+  "statement": "给定一行后缀表达式（逆波兰式），操作数与运算符之间用空格分隔。运算符只有 `+` `-` `*` `/`，操作数都是非负整数。\n\n求表达式的值。除法按整数除法（向零取整），保证除数不为 0、中间结果在 64 位整数范围内。",
+  "inputFormat": "一行，由数字、运算符和空格组成，例如：`5 1 2 + 4 * + 3 -`。",
+  "outputFormat": "一行，一个整数。",
+  "constraints": "表达式长度 ≤ 10000，操作数 ≤ 10^9，结果在 long long 范围内。",
+  "samples": [
+    {
+      "input": "3 4 +\n",
+      "output": "7\n",
+      "explain": "3 + 4 = 7。"
+    },
+    {
+      "input": "5 1 2 + 4 * + 3 -\n",
+      "output": "14\n",
+      "explain": "5 1 2 + 得 5 3；4 * 得 12，栈变 5 12；+ 得 17；3 入栈；- 得 14。"
+    }
+  ],
+  "hints": [
+    "用栈存数字，从左到右扫每个 token。",
+    "是数字就 st.push(stoll(token))，是运算符就弹出两个数计算再压回。",
+    "注意顺序：先弹出的是**右操作数**，后弹出的才是左操作数。减法和除法搞反就全错。"
+  ],
+  "starterCode": "#include <iostream>\n#include <sstream>\n#include <string>\n#include <stack>\nusing namespace std;\n\nint main() {\n    string line;\n    getline(cin, line);\n    istringstream iss(line);\n    stack<long long> st;\n    string tok;\n\n    // TODO: 逐个 token 处理\n\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <sstream>\n#include <string>\n#include <stack>\nusing namespace std;\n\nint main() {\n    string line;\n    if (!getline(cin, line)) return 0;\n    istringstream iss(line);\n    stack<long long> st;\n    string tok;\n\n    while (iss >> tok) {\n        if (tok == \"+\" || tok == \"-\" || tok == \"*\" || tok == \"/\") {\n            long long b = st.top(); st.pop();   // 先弹出的是右操作数\n            long long a = st.top(); st.pop();\n            if (tok == \"+\") st.push(a + b);\n            else if (tok == \"-\") st.push(a - b);\n            else if (tok == \"*\") st.push(a * b);\n            else st.push(a / b);\n        } else {\n            st.push(stoll(tok));\n        }\n    }\n    cout << st.top() << \"\\n\";\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：简单加法", "input": "3 4 +\n", "output": "7\n" },
+    { "name": "样例 2：混合运算", "input": "5 1 2 + 4 * + 3 -\n", "output": "14\n" },
+    { "name": "只有一个数", "input": "7\n", "output": "7\n" },
+    { "name": "先乘后加", "input": "2 3 4 * +\n", "output": "14\n" },
+    { "name": "减法有顺序", "input": "1 2 3 + -\n", "output": "-4\n" },
+    { "name": "除法向零取整", "input": "100 7 /\n", "output": "14\n" },
+    { "name": "负数中间结果", "input": "3 5 - 2 *\n", "output": "-4\n" }
+  ],
+  "knowledgeIds": ["stack-apps"],
+  "timeLimitMs": 2000
+}

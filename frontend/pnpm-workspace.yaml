@@ -1,0 +1,4 @@
+# pnpm 11 的配置放在这里（不再读 package.json 里的 pnpm 字段）
+# 允许 esbuild 运行安装脚本，否则 Vite 起不来
+onlyBuiltDependencies:
+  - esbuild
