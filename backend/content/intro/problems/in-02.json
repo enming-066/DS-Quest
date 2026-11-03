@@ -1,0 +1,41 @@
+{
+  "id": "in-02",
+  "title": "第一个不小于 x 的位置",
+  "difficulty": 3,
+  "tags": ["时间复杂度", "二分查找", "lower_bound"],
+  "summary": "有序数组 + 大量查询，O(nq) 会超时，必须二分。",
+  "statement": "给定一个长度为 n 的**非递减**整数序列，以及 q 次询问。\n\n每次询问给出一个整数 x，求序列中**第一个大于等于 x** 的元素的位置（位置从 1 开始编号）。如果不存在这样的元素，输出 `n+1`。\n\n数据规模：n, q ≤ 200000。每次询问都从头扫一遍是 O(nq)，一定会超时，请用 O(log n) 的二分查找。",
+  "inputFormat": "第一行两个整数 n 和 q。\n第二行 n 个整数，保证非递减。\n接下来 q 行，每行一个整数 x。",
+  "outputFormat": "共 q 行，每行一个整数，表示答案位置。",
+  "constraints": "1 ≤ n, q ≤ 200000，-10⁹ ≤ 元素, x ≤ 10⁹。",
+  "maxN": 200000,
+  "samples": [
+    {
+      "input": "7 3\n1 3 5 7 9 11 13\n7\n8\n0\n",
+      "output": "4\n5\n1\n",
+      "explain": "7 在第 4 个位置；8 不存在，第一个不小于 8 的是 9，在第 5 个位置；0 比所有元素都小，答案是 1。"
+    },
+    {
+      "input": "3 2\n10 20 30\n10\n31\n",
+      "output": "1\n4\n",
+      "explain": "31 比所有元素都大，输出 n+1 = 4。"
+    }
+  ],
+  "hints": [
+    "序列是有序的，这是使用二分的前提。",
+    "答案可能是 n+1（越界），所以二分的右边界取 n 而不是 n-1，用左闭右开的写法最不容易错。",
+    "判断条件用 a[mid] < x：成立就去右半边（left = mid+1），否则去左半边（right = mid）。循环结束时 left 就是答案。",
+    "有重复元素时，这个写法会稳定地停在**第一个**满足条件的位置，这正符合题意。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nconst int MAXN = 200005;\nint a[MAXN];\n\nint main() {\n    int n, q;\n    cin >> n >> q;\n    for (int i = 0; i < n; i++) cin >> a[i];\n    while (q--) {\n        int x;\n        cin >> x;\n        // TODO: 二分求出第一个 >= x 的位置（1 开始），没有输出 n+1\n    }\n    return 0;\n}\n",
+  "solution": "#include <iostream>\nusing namespace std;\n\nconst int MAXN = 200005;\nint a[MAXN];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n, q;\n    if (!(cin >> n >> q)) return 0;\n    for (int i = 0; i < n; i++) cin >> a[i];\n\n    while (q--) {\n        int x;\n        cin >> x;\n        int left = 0, right = n;          // 右边界取 n：答案可能越界\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (a[mid] < x) left = mid + 1;\n            else right = mid;\n        }\n        cout << left + 1 << \"\\n\";        // left 是 0 基下标，加 1 变成位置\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1：三种情况", "input": "7 3\n1 3 5 7 9 11 13\n7\n8\n0\n", "output": "4\n5\n1\n" },
+    { "name": "样例 2：越界", "input": "3 2\n10 20 30\n10\n31\n", "output": "1\n4\n" },
+    { "name": "全部相同", "input": "5 4\n1 1 1 1 1\n1\n0\n2\n1\n", "output": "1\n1\n6\n1\n" },
+    { "name": "只有一个元素", "input": "1 2\n5\n5\n6\n", "output": "1\n2\n" },
+    { "name": "含负数", "input": "4 2\n-9 -5 -1 3\n-5\n-10\n", "output": "2\n1\n" }
+  ],
+  "knowledgeIds": ["time"],
+  "timeLimitMs": 1500
+}

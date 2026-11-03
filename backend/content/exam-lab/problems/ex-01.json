@@ -1,0 +1,35 @@
+{
+  "id": "ex-01",
+  "title": "符号配对 B（<> ^v）",
+  "difficulty": 2,
+  "tags": ["栈", "括号匹配", "真题"],
+  "summary": "上机原题：不只是三种括号，还多了 <> 和 ^v 两种配对。",
+  "statement": "输入 n 组符号串，每组只包含 `(` `)` `<` `>` `^` `v` 六种字符。\n\n判断每组是否满足配对：\n- `(` 与 `)` 配对，`<` 与 `>` 配对，`^` 与 `v` 配对；\n- 必须按顺序闭合，例如 `<>`、`^v`、`(^v)`、`<^v>` 合法，而 `^>`、`<v` 不合法。\n\n合法输出 `Yes`，否则输出 `No`，每组一行。\n\n> 来源：2019-2020 上机题目汇编「符号配对 B」。对应第 2 章 栈的应用。",
+  "inputFormat": "第一行一个整数 n（1 ≤ n ≤ 100）。\n接下来 n 行，每行一个符号串，长度不超过 1000。",
+  "outputFormat": "n 行，每行 `Yes` 或 `No`。",
+  "constraints": "n ≤ 100，每组长度 ≤ 1000。",
+  "samples": [
+    {
+      "input": "4\n<>\n^v\n(^v)\n<()^v>()v<>^\n",
+      "output": "Yes\nYes\nYes\nNo\n",
+      "explain": "最后一组：前面都能配上，但最后的 v 出现时栈已经空了，所以不合法。"
+    }
+  ],
+  "hints": [
+    "和普通括号匹配一模一样，只是多定义了两对映射关系。",
+    "遇到左符号（( < ^）就入栈；遇到右符号就检查栈顶是否是对应的左符号。",
+    "注意空串是合法的（栈空 = 配对完成），以及最后栈必须为空。"
+  ],
+  "starterCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    string line;\n    getline(cin, line);   // 吃掉第一行剩下的换行\n    while (n--) {\n        getline(cin, line);\n        // TODO: 用栈判断\n    }\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nchar st[1005];\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    string line;\n    getline(cin, line);\n\n    while (n--) {\n        getline(cin, line);\n        int top = -1;\n        bool ok = true;\n        for (char c : line) {\n            if (c == '(' || c == '<' || c == '^') {\n                st[++top] = c;\n            } else if (c == ')' || c == '>' || c == 'v') {\n                if (top < 0) { ok = false; break; }\n                char t = st[top];\n                bool match = (c == ')' && t == '(') || (c == '>' && t == '<') || (c == 'v' && t == '^');\n                if (!match) { ok = false; break; }\n                top--;\n            }\n        }\n        if (top >= 0) ok = false;\n        cout << (ok ? \"Yes\\n\" : \"No\\n\");\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例：四种情况", "input": "4\n<>\n^v\n(^v)\n<()^v>()v<>^\n", "output": "Yes\nYes\nYes\nNo\n" },
+    { "name": "全部合法", "input": "3\n()\n^v\n<>\n", "output": "Yes\nYes\nYes\n" },
+    { "name": "类型交叉", "input": "3\n^>\n<v\n(]\n", "output": "No\nNo\nNo\n" },
+    { "name": "左符号过多", "input": "1\n(((\n", "output": "No\n" },
+    { "name": "空行", "input": "1\n\n", "output": "Yes\n" },
+    { "name": "嵌套", "input": "2\n<^v>\n(())\n", "output": "Yes\nYes\n" }
+  ],
+  "knowledgeIds": [],
+  "timeLimitMs": 2000
+}

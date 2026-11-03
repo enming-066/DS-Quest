@@ -47,17 +47,22 @@ def main() -> int:
     print("== 元数据 ==")
     status, raw = get("/api/bootstrap")
     boot = json.loads(raw)
-    check("bootstrap", status == 200 and len(boot["modules"]) == 8, str(status))
+    check("bootstrap", status == 200 and len(boot["modules"]) == 11, str(status))
     open_modules = [m for m in boot["modules"] if m["status"] == "open"]
-    check("两个章节已开放", len(open_modules) == 2, str([m["id"] for m in open_modules]))
+    check("四个章节已开放", len(open_modules) == 4, str([m["id"] for m in open_modules]))
 
-    for mid in ("linear-list", "stack-queue"):
+    for mid in ("intro", "linear-list", "stack-queue"):
         _, raw = get(f"/api/modules/{mid}")
         mod = json.loads(raw)
         check(f"{mid} 知识点/模板/题目", len(mod["knowledge"]) > 0 and
               len(mod["templates"]) > 0 and len(mod["problemRefs"]) > 0,
               f"k={len(mod['knowledge'])} t={len(mod['templates'])} p={len(mod['problemRefs'])}")
         check(f"{mid} 模板带代码", all(t["code"] for t in mod["templates"]))
+
+    # 上机真题关卡只有题目，没有知识点和代码模板
+    _, raw = get("/api/modules/exam-lab")
+    exam = json.loads(raw)
+    check("上机真题关卡有题目", len(exam["problemRefs"]) >= 6, str(len(exam["problemRefs"])))
 
     _, raw = get("/api/problems/ll-01")
     p = json.loads(raw)
@@ -107,7 +112,7 @@ def main() -> int:
     check("知识点打卡", res5["xpGained"] >= 0)
     _, raw = get("/api/stats")
     stats = json.loads(raw)
-    check("统计接口", stats["problemsSolved"] >= 1 and stats["totalProblems"] == 15)
+    check("统计接口", stats["problemsSolved"] >= 1 and stats["totalProblems"] == 24)
 
     print("== AI（未配置 Key 时应优雅降级） ==")
     _, res6 = post("/api/ai/coach", {"problemId": "ll-01", "code": good, "level": 2})

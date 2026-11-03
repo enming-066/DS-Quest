@@ -1,0 +1,37 @@
+{
+  "id": "ex-02",
+  "title": "出栈序列判定（栈混洗）",
+  "difficulty": 3,
+  "tags": ["栈", "模拟", "真题"],
+  "summary": "上机原题：入栈顺序不一定是升序，一次要判多条出栈序列。",
+  "statement": "给定一个入栈顺序（元素互不相同），元素按该顺序依次入栈，中途可以随时出栈。\n\n现在给出 t 个出栈序列，请判断每个序列是否可能是这个入栈顺序的合法出栈序列。\n\n**判定方法**：用一个栈模拟。按入栈顺序逐个入栈，每入一个就检查栈顶是否等于目标序列的当前元素，能弹就一直弹；最后栈空且序列走完即合法。\n\n> 来源：2019-2020 上机题目汇编「出栈序列判定」。对应第 2 章。",
+  "inputFormat": "第一行一个整数 n（1 ≤ n ≤ 10000）。\n第二行 n 个整数，为入栈顺序（互不相同）。\n第三行一个整数 t（1 ≤ t ≤ 20）。\n接下来 t 行，每行 n 个整数，表示一个待判断的出栈序列。",
+  "outputFormat": "t 行，每行 `yes` 或 `no`（都是小写）。",
+  "constraints": "n ≤ 10000，t ≤ 20，元素在 int 范围内。",
+  "maxN": 10000,
+  "samples": [
+    {
+      "input": "5\n1 2 3 4 5\n2\n4 5 3 2 1\n4 3 5 1 2\n",
+      "output": "yes\nno\n",
+      "explain": "第二个序列：要出 4，必须先把 1 2 3 4 入栈；出 4 后栈里是 1 2 3，栈顶是 3，所以下一个只能是 3 或继续入栈 5，不可能是 1。"
+    }
+  ],
+  "hints": [
+    "不要试图找规律，直接模拟最稳：栈 + 一个指向目标序列的指针 j。",
+    "外层按入栈顺序 i 从 0 到 n-1 循环，每次 push(a[i])，然后 while(栈顶 == 目标[j]) 就 pop 且 j++。",
+    "循环结束后，判断栈是否为空（等价于 j == n）。",
+    "注意 n 最大 1e4、t 最大 20，总操作量 2e5，完全跑得动。"
+  ],
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nconst int MAXN = 10005;\nint pushOrder[MAXN], target[MAXN], st[MAXN];\n\nint main() {\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> pushOrder[i];\n    int t;\n    cin >> t;\n    while (t--) {\n        for (int i = 0; i < n; i++) cin >> target[i];\n        // TODO: 模拟并输出 yes / no\n    }\n    return 0;\n}\n",
+  "solution": "#include <iostream>\nusing namespace std;\n\nconst int MAXN = 10005;\nint pushOrder[MAXN], target[MAXN], st[MAXN];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    if (!(cin >> n)) return 0;\n    for (int i = 0; i < n; i++) cin >> pushOrder[i];\n\n    int t;\n    cin >> t;\n    while (t--) {\n        for (int i = 0; i < n; i++) cin >> target[i];\n\n        int top = -1, j = 0;\n        for (int i = 0; i < n; i++) {\n            st[++top] = pushOrder[i];\n            while (top >= 0 && st[top] == target[j]) {\n                top--;\n                j++;\n            }\n        }\n        cout << (top < 0 && j == n ? \"yes\\n\" : \"no\\n\");\n    }\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例：一个合法一个非法", "input": "5\n1 2 3 4 5\n2\n4 5 3 2 1\n4 3 5 1 2\n", "output": "yes\nno\n" },
+    { "name": "全逆序与顺序", "input": "3\n1 2 3\n3\n3 2 1\n1 2 3\n2 1 3\n", "output": "yes\nyes\nyes\n" },
+    { "name": "不可能：大数先出后小数顺序", "input": "3\n1 2 3\n1\n3 1 2\n", "output": "no\n" },
+    { "name": "单个元素", "input": "1\n7\n1\n7\n", "output": "yes\n" },
+    { "name": "任意入栈顺序（合法）", "input": "4\n4 1 3 2\n2\n2 3 1 4\n4 2 1 3\n", "output": "yes\nno\n" },
+    { "name": "任意入栈顺序（判空栈）", "input": "2\n5 9\n2\n5 9\n9 5\n", "output": "yes\nyes\n" }
+  ],
+  "knowledgeIds": [],
+  "timeLimitMs": 2000
+}

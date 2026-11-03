@@ -12,6 +12,14 @@ backend/data/
 backend/.env
 backend/.python-path
 
+# 课程素材（老师发的 PPT / 卷子，不公开）
+materials/*
+!materials/README.md
+数据结构/
+**/*.pptx
+**/*.ppt
+**/*.docx
+
 # 临时文件
 .tmp/
 *.log

@@ -1,0 +1,83 @@
+[
+  {
+    "id": "binary-search",
+    "title": "二分查找的两个版本",
+    "lang": "cpp",
+    "level": "core",
+    "summary": "经典二分 + 「第一个 ≥ x」的 lower_bound 写法，后者是你真正会用到的那一种。",
+    "purpose": "凡是「有序数组里找位置」，先想二分。O(log n) 能把 1e6 次查询压到瞬间。",
+    "file": "code/binary-search.cpp",
+    "explanations": [
+      { "anchor": "int mid = left + (right - left) / 2;", "span": 1, "text": "写成 (left+right)/2 在 left、right 都很大时可能溢出成负数。这种写法是标准答案。" },
+      { "anchor": "if (a[mid] < target) left = mid + 1;   // 去右半边", "span": 2, "text": "每次砍掉一半，所以最多循环 log2(n) 次——这就是 O(log n) 的来源。" },
+      { "anchor": "int left = 0, right = n;", "span": 1, "text": "lower_bound 的右边界取 n 而不是 n-1，因为「第一个 ≥ x 的位置」可能越界（表示没有）。" },
+      { "anchor": "if (a[mid] < target) left = mid + 1;", "span": 2, "text": "注意这里没有 mid-1：当 a[mid] >= target 时，mid 本身可能就是答案，只能令 right = mid。" }
+    ],
+    "pitfalls": [
+      "while (left < right) 和 while (left <= right) 对应两种写法，混用会死循环或漏掉边界。",
+      "循环内没有缩小范围（比如忘了 mid±1），直接死循环。",
+      "对无序数组用二分——前提是有序。"
+    ],
+    "relatedKnowledge": ["time"]
+  },
+  {
+    "id": "sieve",
+    "title": "埃氏筛：把 O(n√n) 变成 O(n log log n)",
+    "lang": "cpp",
+    "level": "core",
+    "summary": "标记倍数求素数表，复杂度低到 n = 1e8 都能跑。",
+    "purpose": "多组询问「x 以内的素数有多少个」时，预处理一次就够。",
+    "file": "code/sieve.cpp",
+    "explanations": [
+      { "anchor": "for (long long j = (long long)i * i; j <= n; j += i) {", "span": 3, "text": "从 i*i 开始标记，是因为比 i*i 小的合数一定有一个比 i 小的素因子，早被筛掉了。" },
+      { "anchor": "if ((long long)i * i <= n) {", "span": 1, "text": "i*i 可能超过 int 范围，先转 long long，这是很常见的一个溢出坑。" },
+      { "anchor": "if (!isComposite[i]) {", "span": 1, "text": "没被标记过就是素数。整个算法的时间是 O(n log log n)，接近线性。" }
+    ],
+    "pitfalls": [
+      "i*i 用 int 相乘导致溢出（n 较大时）。",
+      "从 2*i 开始标记不是错，只是多做了一些无用功。",
+      "数组开成 int 而不是 bool，1e8 时会直接 MLE。"
+    ],
+    "relatedKnowledge": ["time", "space"]
+  },
+  {
+    "id": "max-subarray",
+    "title": "最大连续子段和：O(n³) → O(n²) → O(n)",
+    "lang": "cpp",
+    "level": "exam",
+    "summary": "同一道题的三种写法放在一起，是理解「复杂度差别有多大」最直观的例子。",
+    "purpose": "期末和考研的高频题；也是「动态规划入门」的第一题。",
+    "file": "code/max-subarray.cpp",
+    "explanations": [
+      { "anchor": "int BruteForce3(const int a[], int n) {", "span": 12, "text": "三重循环枚举起点、终点、区间求和：n³ 次。n = 1000 就是 10 亿次，必超时。" },
+      { "anchor": "int BruteForce2(const int a[], int n) {", "span": 11, "text": "固定起点、边扩展边累加，省掉最内层的求和循环：O(n²)。" },
+      { "anchor": "endingHere = (endingHere > 0) ? endingHere + a[i] : a[i];", "span": 1, "text": "Kadane 的核心：如果前面那段的和是负的，不如从当前元素重新开始。" },
+      { "anchor": "int best = a[0];", "span": 1, "text": "初值必须取 a[0] 而不是 0，否则全是负数时会得到错误的 0。" }
+    ],
+    "pitfalls": [
+      "best 初始化为 0，遇到全负数数组就错了（题目要求的是「非空子段」）。",
+      "把「最大子段和」和「最大子序列和」搞混，后者只要把正数全加起来。",
+      "忘记处理 n = 1 的情况。"
+    ],
+    "relatedKnowledge": ["time"]
+  },
+  {
+    "id": "timing",
+    "title": "用运行时间验证复杂度（实验报告用）",
+    "lang": "cpp",
+    "level": "exam",
+    "summary": "把 n 翻倍，测 O(n²) 和 O(n log n) 的耗时，用数据证明「增长趋势」不是空话。",
+    "purpose": "绪论实验课常要求「验证冒泡排序的时间复杂度」，这份代码直接改成表格就能交。",
+    "file": "code/timing.cpp",
+    "explanations": [
+      { "anchor": "auto t1 = high_resolution_clock::now();", "span": 3, "text": "C++11 的高精度计时，比 clock() 精确得多。" },
+      { "anchor": "for (int n = 1000; n <= 16000; n *= 2) {", "span": 1, "text": "每次把规模翻倍，观察耗时的倍数关系——线性是 2 倍，平方是 4 倍。" },
+      { "anchor": "if (!swapped) break;", "span": 1, "text": "加了这个提前退出，冒泡的最好情况才是 O(n)；不加的话最坏最好都是 O(n²)。" }
+    ],
+    "pitfalls": [
+      "不编译 -O2 就测，结果被编译器优化和调试开销干扰。",
+      "只测一次就下结论，应该多次取平均，并关掉其他占 CPU 的程序。"
+    ],
+    "relatedKnowledge": ["time", "space"]
+  }
+]

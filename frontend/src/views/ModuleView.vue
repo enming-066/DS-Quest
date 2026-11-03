@@ -82,10 +82,18 @@ function toggleTemplate(id) {
           <p class="sub">{{ moduleData.subtitle }}</p>
           <p class="goal">{{ moduleData.goal }}</p>
           <div class="mod-meta">
-            <span><Icon name="book" :size="14" /> 知识点 {{ moduleData.knowledge.length }}</span>
-            <span><Icon name="code" :size="14" /> 代码模板 {{ moduleData.templates.length }}</span>
-            <span><Icon name="target" :size="14" /> 练习 {{ moduleData.problemRefs.length }}</span>
-            <span><Icon name="clock" :size="14" /> 约 {{ moduleData.estimatedMinutes }} 分钟</span>
+            <span v-if="moduleData.knowledge.length">
+              <Icon name="book" :size="14" /> 知识点 {{ moduleData.knowledge.length }}
+            </span>
+            <span v-if="moduleData.templates.length">
+              <Icon name="code" :size="14" /> 代码模板 {{ moduleData.templates.length }}
+            </span>
+            <span v-if="moduleData.problemRefs.length">
+              <Icon name="target" :size="14" /> 练习 {{ moduleData.problemRefs.length }}
+            </span>
+            <span v-if="moduleData.estimatedMinutes">
+              <Icon name="clock" :size="14" /> 约 {{ moduleData.estimatedMinutes }} 分钟
+            </span>
           </div>
         </div>
         <div class="mod-progress">
@@ -95,11 +103,21 @@ function toggleTemplate(id) {
       </header>
 
       <nav class="tabs">
-        <button class="tab" :class="{ on: tab === 'knowledge' }" @click="tab = 'knowledge'">
+        <button
+          v-if="moduleData.knowledge.length"
+          class="tab"
+          :class="{ on: tab === 'knowledge' }"
+          @click="tab = 'knowledge'"
+        >
           <Icon name="book" :size="15" /> 知识点
           <span class="count">{{ readCount() }}/{{ moduleData.knowledge.length }}</span>
         </button>
-        <button class="tab" :class="{ on: tab === 'code' }" @click="tab = 'code'">
+        <button
+          v-if="moduleData.templates.length"
+          class="tab"
+          :class="{ on: tab === 'code' }"
+          @click="tab = 'code'"
+        >
           <Icon name="code" :size="15" /> 代码库
           <span class="count">{{ moduleData.templates.length }}</span>
         </button>

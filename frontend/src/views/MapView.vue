@@ -33,7 +33,7 @@ const continueTarget = computed(() => {
     <section class="hero card">
       <div class="hero-main">
         <span class="eyebrow">数据结构 · 期末冲刺</span>
-        <h1>从线性表开始，<br />一关一关把代码写通。</h1>
+        <h1>从第一关开始，<br />一关一关把代码写通。</h1>
         <p class="lede">
           每关都有知识点、能直接抄的代码模板、可视化演示，以及会告诉你"错在哪一行"的判题。
           AI 助教只在你点它的时候出现，不烧钱。
@@ -76,7 +76,7 @@ const continueTarget = computed(() => {
 
     <div class="map-head">
       <h2>关卡地图</h2>
-      <p>前两关已开放，后面的章节等前面打通了再补内容。</p>
+      <p>前 {{ openModules.length }} 关已开放，后面的章节等前面打通了再补内容。</p>
     </div>
 
     <div class="levels">

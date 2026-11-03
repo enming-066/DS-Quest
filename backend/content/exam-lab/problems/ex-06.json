@@ -1,0 +1,41 @@
+{
+  "id": "ex-06",
+  "title": "由先序序列重构二叉树",
+  "difficulty": 3,
+  "tags": ["树", "二叉树", "遍历", "真题"],
+  "summary": "上机原题：输入带 # 的先序序列，输出中序遍历。",
+  "statement": "输入一棵二叉树的先序遍历字符串，其中 `#` 表示空树（空结点）。请根据它建立二叉树，输出**中序遍历**序列。\n\n例如先序序列 `ABDG##H###CE#I##F##` 对应的树，中序遍历是 `G D H B A E I C F`。\n\n每个结点用一个字符表示，输出时字符之间用空格分隔。\n\n> 来源：2019-2020 上机题目汇编「二叉树重构 A」。对应第 6 章 树。",
+  "inputFormat": "一行字符串，不含空格，长度不超过 100。",
+  "outputFormat": "一行，中序遍历结果，字符之间用一个空格分隔。",
+  "constraints": "字符串长度 ≤ 100，字符为可见 ASCII（不含空格）。",
+  "samples": [
+    {
+      "input": "ABDG##H###CE#I##F##\n",
+      "output": "G D H B A E I C F\n",
+      "explain": "先序是「根 左 右」，所以第一个字符 A 是根，接着递归读左子树 DG##H###，再读右子树 CE#I##F##。"
+    },
+    {
+      "input": "ach##id#j###wy##qs#x##\n",
+      "output": "h c d j i a y w s x q\n",
+      "explain": "结点是小写字母，规则完全一样。"
+    }
+  ],
+  "hints": [
+    "用一个全局下标 k 从左到右扫描字符串，每次取一个字符。",
+    "遇到 '#' 返回空指针；否则 new 一个结点，递归建左子树、再建右子树。",
+    "建完树后中序遍历：左 → 根 → 右。",
+    "输出空格的处理：用一个计数器判断是不是第一个字符，避免行末多一个空格。",
+    "递归深度最多 100，不会爆栈。"
+  ],
+  "starterCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Node {\n    char ch;\n    Node *left, *right;\n    Node(char c) : ch(c), left(nullptr), right(nullptr) {}\n};\n\nstring s;\nint pos = 0;\n\nNode* build() {\n    // TODO: 按先序递归建树\n    return nullptr;\n}\n\nvoid inorder(Node *p) {\n    // TODO: 中序遍历输出\n}\n\nint main() {\n    cin >> s;\n    Node *root = build();\n    inorder(root);\n    cout << \"\\n\";\n    return 0;\n}\n",
+  "solution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Node {\n    char ch;\n    Node *left, *right;\n    Node(char c) : ch(c), left(nullptr), right(nullptr) {}\n};\n\nstring s;\nint pos = 0;\n\nNode* build() {\n    if (pos >= (int)s.size()) return nullptr;\n    char c = s[pos++];\n    if (c == '#') return nullptr;\n    Node *p = new Node(c);\n    p->left = build();\n    p->right = build();\n    return p;\n}\n\nvoid inorder(Node *p) {\n    if (p == nullptr) return;\n    inorder(p->left);\n    cout << p->ch << ' ';\n    inorder(p->right);\n}\n\nint main() {\n    if (!(cin >> s)) return 0;\n    Node *root = build();\n    inorder(root);\n    cout << \"\\n\";\n    return 0;\n}\n",
+  "tests": [
+    { "name": "样例 1", "input": "ABDG##H###CE#I##F##\n", "output": "G D H B A E I C F\n" },
+    { "name": "样例 2：小写字母", "input": "ach##id#j###wy##qs#x##\n", "output": "h c d j i a y w s x q\n" },
+    { "name": "样例 3：符号做结点", "input": "&!#fae###c#g##*$+###@##\n", "output": "! e a f c g & + $ * @\n" },
+    { "name": "只有一个结点", "input": "A\n", "output": "A\n" },
+    { "name": "左斜树", "input": "AB##C##\n", "output": "B A C\n" }
+  ],
+  "knowledgeIds": [],
+  "timeLimitMs": 2000
+}
