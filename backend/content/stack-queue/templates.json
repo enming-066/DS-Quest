@@ -8,31 +8,34 @@
     "purpose": "期末机考默写模板。",
     "file": "code/seqstack.cpp",
     "explanations": [
-      { "anchor": "typedef struct {", "span": 4, "text": "数组 + top。top 存的是下标，不是指针；这是课本叫法的坑。" },
-      { "anchor": "bool Push(SqStack &S, int e) {", "span": 5, "text": "先判满再 ++top。写成 data[top++] 就会先写到 -1 号位置，直接越界。" },
-      { "anchor": "bool Pop(SqStack &S, int &e) {", "span": 5, "text": "先取值再 top--。注意 Pop 会删除元素，只想看用 GetTop。" },
-      { "anchor": "void Convert(int n, int base) {", "span": 8, "text": "进制转换的本质是短除法，余数倒序输出——倒序正是栈的强项。" }
+      {
+        "anchor": "typedef struct {",
+        "span": 4,
+        "text": "数组 + top。top 存的是下标，不是指针；这是课本叫法的坑。"
+      },
+      {
+        "anchor": "bool Push(SqStack &S, int e) {",
+        "span": 5,
+        "text": "先判满再 ++top。写成 data[top++] 就会先写到 -1 号位置，直接越界。"
+      },
+      {
+        "anchor": "bool Pop(SqStack &S, int &e) {",
+        "span": 5,
+        "text": "先取值再 top--。注意 Pop 会删除元素，只想看用 GetTop。"
+      },
+      {
+        "anchor": "void Convert(int n, int base) {",
+        "span": 8,
+        "text": "进制转换的本质是短除法，余数倒序输出——倒序正是栈的强项。"
+      }
     ],
     "pitfalls": [
       "判满写成 top == MAXSIZE，越界一个位置。",
       "空栈出栈没有检查，读到随机值。"
     ],
-    "relatedKnowledge": ["seq-stack"]
-  },
-  {
-    "id": "seqstack-c",
-    "title": "顺序栈 · C 语言实验版",
-    "lang": "c",
-    "level": "core",
-    "summary": "指针传参版顺序栈，符合实验报告的函数签名习惯。",
-    "purpose": "交数据结构实验。",
-    "file": "code/seqstack.c",
-    "explanations": [
-      { "anchor": "bool Push(SqStack *S, int e) {", "span": 4, "text": "C 里所有成员访问用 ->，调用时传 &S。" },
-      { "anchor": "bool Pop(SqStack *S, int *e) {", "span": 4, "text": "带回值必须传地址，函数内写 *e = ...；只读参数用 const SqStack *。" }
-    ],
-    "pitfalls": ["忘记 #include <stdbool.h>，bool 会报未定义。", "调用时忘了 &。"],
-    "relatedKnowledge": ["seq-stack"]
+    "relatedKnowledge": [
+      "seq-stack"
+    ]
   },
   {
     "id": "linkstack",
@@ -43,45 +46,68 @@
     "purpose": "理解\"栈可以用链表实现\"，以及链栈不需要判满。",
     "file": "code/linkstack.cpp",
     "explanations": [
-      { "anchor": "bool Push(LinkStack &S, int e) {", "span": 7, "text": "头插三步：新结点 next 指向原栈顶、更新栈顶指针 S = s。" },
-      { "anchor": "bool Pop(LinkStack &S, int &e) {", "span": 7, "text": "先记住 p = S，再 S = S->next，最后 delete p。顺序反了就找不到要删的结点了。" }
+      {
+        "anchor": "bool Push(LinkStack &S, int e) {",
+        "span": 7,
+        "text": "头插三步：新结点 next 指向原栈顶、更新栈顶指针 S = s。"
+      },
+      {
+        "anchor": "bool Pop(LinkStack &S, int &e) {",
+        "span": 7,
+        "text": "先记住 p = S，再 S = S->next，最后 delete p。顺序反了就找不到要删的结点了。"
+      }
     ],
-    "pitfalls": ["Pop 里忘记 delete，内存泄漏。", "用带头结点的链表时判空写成 S == NULL，应该是 S->next == NULL。"],
-    "relatedKnowledge": ["link-stack"]
+    "pitfalls": [
+      "Pop 里忘记 delete，内存泄漏。",
+      "用带头结点的链表时判空写成 S == NULL，应该是 S->next == NULL。"
+    ],
+    "relatedKnowledge": [
+      "link-stack"
+    ]
   },
   {
     "id": "circular-queue",
-    "title": "循环队列 · C++ 完整实现",
+    "title": "循环队列：课件写法（front 指队首前一位）",
     "lang": "cpp",
     "level": "core",
-    "summary": "牺牲一个单元判满，含判空/判满/长度/入队/出队/取队头。",
-    "purpose": "循环队列是必考代码，建议原样背下来。",
+    "summary": "严格按课件 P19~P23：front 指向队首前一个位置，rear 指向队尾，构造时多开一格。",
+    "purpose": "课件第 2 章（2）的原版代码，期末考「循环队列判空判满」时按这一份答。",
     "file": "code/circular-queue.cpp",
     "explanations": [
-      { "anchor": "bool QueueFull(const SqQueue &Q) { return (Q.rear + 1) % MAXSIZE == Q.front; }", "span": 1, "text": "牺牲一个单元：rear 再走一步就撞上 front 就算满。所以实际最多存 MAXSIZE-1 个。" },
-      { "anchor": "int QueueLength(const SqQueue &Q) { return (Q.rear - Q.front + MAXSIZE) % MAXSIZE; }", "span": 1, "text": "加 MAXSIZE 是为了处理 rear < front（绕回去）的情况，不加会得到负数。" },
-      { "anchor": "Q.rear = (Q.rear + 1) % MAXSIZE;", "span": 1, "text": "取模是循环队列的灵魂：到了数组末尾就绕回 0。" }
+      {
+        "anchor": "MaxSize = MaxQueueSize + 1;",
+        "span": 1,
+        "text": "多开一格是课件特意标注的：牺牲一个位置，才能把「空」和「满」区分开。用户传 4，数组实际是 5。"
+      },
+      {
+        "anchor": "bool IsFull() const { return ((rear + 1) % MaxSize == front); }",
+        "span": 1,
+        "text": "队列满的条件。注意是 front == (rear+1)%MaxSize，和另一种约定写法相反，答题前先看清题目用哪种。"
+      },
+      {
+        "anchor": "rear = (rear + 1) % MaxSize;",
+        "span": 2,
+        "text": "入队先移动 rear 再写入：因为 rear 本身指向「最后一个元素」，新元素要放在它的下一格。"
+      },
+      {
+        "anchor": "front = (front + 1) % MaxSize;",
+        "span": 2,
+        "text": "出队先移动 front 再取值：front 指向队首的前一位，移动一格才到真正的队首。"
+      },
+      {
+        "anchor": "int Length() const",
+        "span": 1,
+        "text": "元素个数公式：(rear - front + MaxSize) % MaxSize。加 MaxSize 是为了处理 rear < front（绕回去）的情况。"
+      }
     ],
     "pitfalls": [
       "忘记取模，rear 越界。",
       "判满写成 rear == front，把满当成了空。",
       "以为能存 MAXSIZE 个元素，其实只能存 MAXSIZE-1 个。"
     ],
-    "relatedKnowledge": ["circular-queue"]
-  },
-  {
-    "id": "circular-queue-c",
-    "title": "循环队列 · C 语言实验版",
-    "lang": "c",
-    "level": "core",
-    "summary": "和 C++ 版逻辑一致，指针传参写法。",
-    "purpose": "实验报告版。",
-    "file": "code/circular-queue.c",
-    "explanations": [
-      { "anchor": "bool EnQueue(SqQueue *Q, int e) {", "span": 6, "text": "先判满，再写入 data[rear]，最后 rear 取模前进。" }
-    ],
-    "pitfalls": ["和 C++ 版一样，别忘取模。"],
-    "relatedKnowledge": ["circular-queue"]
+    "relatedKnowledge": [
+      "circular-queue"
+    ]
   },
   {
     "id": "bracket",
@@ -92,11 +118,24 @@
     "purpose": "栈的应用题必考，代码短、逻辑典型。",
     "file": "code/bracket.cpp",
     "explanations": [
-      { "anchor": "if (st.empty()) return false;            // 右括号多了", "span": 1, "text": "空栈遇到右括号，说明右括号多了，直接失败。" },
-      { "anchor": "return st.empty();                               // 左括号多了也不匹配", "span": 1, "text": "扫完后栈里还有左括号，说明左括号多了，同样不匹配。这一步最容易被漏掉。" }
+      {
+        "anchor": "if (st.empty()) return false;            // 右括号多了",
+        "span": 1,
+        "text": "空栈遇到右括号，说明右括号多了，直接失败。"
+      },
+      {
+        "anchor": "return st.empty();                               // 左括号多了也不匹配",
+        "span": 1,
+        "text": "扫完后栈里还有左括号，说明左括号多了，同样不匹配。这一步最容易被漏掉。"
+      }
     ],
-    "pitfalls": ["只判断了\"右括号多\"，忘了\"左括号多\"。", "没判断括号类型，把所有左括号当成同一种。"],
-    "relatedKnowledge": ["stack-apps"]
+    "pitfalls": [
+      "只判断了\"右括号多\"，忘了\"左括号多\"。",
+      "没判断括号类型，把所有左括号当成同一种。"
+    ],
+    "relatedKnowledge": [
+      "stack-apps"
+    ]
   },
   {
     "id": "postfix",
@@ -107,9 +146,18 @@
     "purpose": "表达式求值题的简化版本，考试常考这道。",
     "file": "code/postfix.cpp",
     "explanations": [
-      { "anchor": "long long b = st.top(); st.pop();   // 先弹出的是右操作数", "span": 2, "text": "顺序是重中之重：先弹出的是右操作数 b，后弹出的才是左操作数 a。减法和除法写反就全错。" }
+      {
+        "anchor": "long long b = st.top(); st.pop();   // 先弹出的是右操作数",
+        "span": 2,
+        "text": "顺序是重中之重：先弹出的是右操作数 b，后弹出的才是左操作数 a。减法和除法写反就全错。"
+      }
     ],
-    "pitfalls": ["a - b 写成了 b - a。", "用 int 存结果，大数溢出。"],
-    "relatedKnowledge": ["stack-apps"]
+    "pitfalls": [
+      "a - b 写成了 b - a。",
+      "用 int 存结果，大数溢出。"
+    ],
+    "relatedKnowledge": [
+      "stack-apps"
+    ]
   }
 ]

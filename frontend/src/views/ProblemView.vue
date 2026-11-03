@@ -49,13 +49,13 @@ async function load() {
       try {
         const parsed = JSON.parse(draft)
         code.value = parsed.code || data.starterCode
-        lang.value = parsed.lang || 'cpp'
+        lang.value = 'cpp'
       } catch {
         code.value = data.starterCode
       }
     } else if (data.savedCode?.code) {
       code.value = data.savedCode.code
-      lang.value = data.savedCode.lang || 'cpp'
+      lang.value = 'cpp'
     } else {
       code.value = data.starterCode
     }
@@ -73,7 +73,7 @@ watch([code, lang], () => {
   if (!problem.value) return
   localStorage.setItem(
     draftKey.value,
-    JSON.stringify({ code: code.value, lang: lang.value, at: Date.now() })
+    JSON.stringify({ code: code.value, lang: 'cpp', at: Date.now() })
   )
 })
 
@@ -92,7 +92,7 @@ async function submit() {
   submitting.value = true
   result.value = null
   try {
-    const res = await api.judge({ problemId: problemId.value, code: code.value, lang: lang.value })
+    const res = await api.judge({ problemId: problemId.value, code: code.value, lang: 'cpp' })
     result.value = res
     applyJudgeProgress(res, problemId.value)
     if (res.verdict === 'AC') {
@@ -244,11 +244,7 @@ async function submit() {
         <!-- 右：编辑器 + 结果 -->
         <section class="workspace">
           <div class="ws-bar">
-            <div class="lang-switch">
-              <button :class="{ on: lang === 'cpp' }" @click="lang = 'cpp'">C++</button>
-              <button :class="{ on: lang === 'c' }" @click="lang = 'c'">C</button>
-            </div>
-            <span class="ws-tip">Ctrl + Enter 提交</span>
+            <span class="ws-tip">C++ · Ctrl + Enter 提交</span>
             <div class="grow"></div>
             <button class="btn btn-sm btn-ghost" @click="resetCode">
               <Icon name="refresh" :size="14" /> 恢复模板
@@ -261,7 +257,7 @@ async function submit() {
 
           <CodeEditor
             v-model="code"
-            :language="lang === 'c' ? 'c' : 'cpp'"
+            language="cpp"
             :height="400"
             @submit="submit"
           />

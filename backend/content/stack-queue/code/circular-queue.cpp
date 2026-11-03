@@ -1,67 +1,85 @@
-// 循环队列（C++ 版）—— 牺牲一个单元判满
+// 循环队列 —— 严格按课件第 2 章（2）P19~P23 的写法
+// 编译：g++ -O2 -std=c++14 -o circular_queue circular_queue.cpp
+//
+// 课件约定（和很多教材相反，务必看清）：
+//   front 指向队首元素的【前一个位置】，rear 指向最后一个元素。
+//   空：front == rear
+//   满：front == (rear + 1) % MaxSize
+//   构造时 MaxSize = MaxQueueSize + 1，多留一格用来区分空和满。
 #include <iostream>
 using namespace std;
 
-#define MAXSIZE 8
-
-typedef struct {
-    int data[MAXSIZE];
-    int front, rear;   // rear 指向队尾元素的下一个位置
-} SqQueue;
-
-void InitQueue(SqQueue &Q) { Q.front = Q.rear = 0; }
-bool QueueEmpty(const SqQueue &Q) { return Q.front == Q.rear; }
-bool QueueFull(const SqQueue &Q) { return (Q.rear + 1) % MAXSIZE == Q.front; }
-int QueueLength(const SqQueue &Q) { return (Q.rear - Q.front + MAXSIZE) % MAXSIZE; }
-
-bool EnQueue(SqQueue &Q, int e) {
-    if (QueueFull(Q)) return false;
-    Q.data[Q.rear] = e;
-    Q.rear = (Q.rear + 1) % MAXSIZE;
-    return true;
-}
-
-bool DeQueue(SqQueue &Q, int &e) {
-    if (QueueEmpty(Q)) return false;
-    e = Q.data[Q.front];
-    Q.front = (Q.front + 1) % MAXSIZE;
-    return true;
-}
-
-bool GetHead(const SqQueue &Q, int &e) {
-    if (QueueEmpty(Q)) return false;
-    e = Q.data[Q.front];
-    return true;
-}
-
-void PrintQueue(const SqQueue &Q) {
-    cout << "[";
-    bool first = true;
-    for (int i = Q.front; i != Q.rear; i = (i + 1) % MAXSIZE) {
-        if (!first) cout << " ";
-        cout << Q.data[i];
-        first = false;
+template<class T>
+class Queue {
+public:
+    Queue(int MaxQueueSize = 10) {
+        MaxSize = MaxQueueSize + 1;        // 留出一个额外空间
+        queue = new T[MaxSize];
+        front = rear = 0;
     }
-    cout << "] length=" << QueueLength(Q) << "\n";
-}
+    ~Queue() { delete[] queue; }
+
+    bool IsEmpty() const { return front == rear; }
+    bool IsFull() const { return ((rear + 1) % MaxSize == front); }
+
+    // 队首在 front 的后一格，队尾就是 rear 那一格
+    T First() const { return queue[(front + 1) % MaxSize]; }
+    T Last() const { return queue[rear]; }
+
+    // 入队：先移动 rear，再写入
+    bool Add(const T& x) {
+        if (IsFull()) return false;
+        rear = (rear + 1) % MaxSize;
+        queue[rear] = x;
+        return true;
+    }
+
+    // 出队：先移动 front，再取值
+    bool Delete(T& x) {
+        if (IsEmpty()) return false;
+        front = (front + 1) % MaxSize;
+        x = queue[front];
+        return true;
+    }
+
+    // 元素个数：两种约定下公式一样
+    int Length() const { return (rear - front + MaxSize) % MaxSize; }
+
+    void Output() const {
+        cout << "[";
+        for (int i = 1; i <= Length(); i++) {
+            cout << queue[(front + i) % MaxSize];
+            if (i < Length()) cout << " ";
+        }
+        cout << "]  个数=" << Length() << "\n";
+    }
+
+private:
+    int front;    // 队首的前一个位置
+    int rear;     // 队尾
+    int MaxSize;
+    T* queue;
+};
 
 int main() {
-    SqQueue Q;
-    InitQueue(Q);
+    Queue<int> q(4);                 // 用户说容量 4，实际数组 5，能存 4 个
 
-    for (int i = 1; i <= 6; i++) {
-        cout << "入队 " << i << " -> " << (EnQueue(Q, i) ? "成功" : "失败（队满）") << "\n";
+    for (int i = 1; i <= 4; i++) {
+        bool ok = q.Add(i);
+        cout << "Add(" << i << ") " << (ok ? "成功" : "失败（队满）") << "  ";
+        q.Output();
     }
-    PrintQueue(Q);
 
-    int e;
-    DeQueue(Q, e); DeQueue(Q, e);
-    cout << "出队两个后：";
-    PrintQueue(Q);
+    int x = 0;
+    q.Delete(x);
+    cout << "Delete -> " << x << "  ";
+    q.Output();
 
-    cout << "再入队 7、8：";
-    cout << (EnQueue(Q, 7) ? "7成功 " : "7失败 ");
-    cout << (EnQueue(Q, 8) ? "8成功" : "8失败") << "\n";
-    PrintQueue(Q);
+    q.Add(5);
+    cout << "Add(5) 成功  ";
+    q.Output();
+
+    cout << "还能再插入吗？" << (q.IsFull() ? "不能，满了" : "可以") << "\n";
+    cout << "队首 First = " << q.First() << "，队尾 Last = " << q.Last() << "\n";
     return 0;
 }

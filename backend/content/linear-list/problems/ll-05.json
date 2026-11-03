@@ -2,9 +2,13 @@
   "id": "ll-05",
   "title": "单链表就地逆置",
   "difficulty": 3,
-  "tags": ["单链表", "逆置", "指针"],
+  "tags": [
+    "单链表",
+    "逆置",
+    "指针"
+  ],
   "summary": "不新建结点、不开数组，只改 next 指针把链表反过来。",
-  "statement": "读入 n 个整数，用尾插法建立带头结点的单链表，然后把链表**就地逆置**，再输出。\n\n要求：\n- 不允许申请新结点；\n- 不允许把数据搬到数组里倒序输出；\n- 只允许修改 `next` 指针。\n\n如果 n = 0，输出 `empty`。",
+  "statement": "读入 n 个整数，用尾插法建立单链表，然后把链表**就地逆置**，再输出。\n\n要求：\n- 不允许申请新结点；\n- 不允许把数据搬到数组里倒序输出；\n- 只允许修改 `next` 指针。\n\n如果 n = 0，输出 `empty`。",
   "inputFormat": "第一行一个整数 n（0 ≤ n ≤ 1000）。\n第二行 n 个整数。",
   "outputFormat": "一行，逆置后的序列，空格分隔；空表输出 `empty`。",
   "constraints": "-10^9 ≤ 元素 ≤ 10^9。",
@@ -26,15 +30,38 @@
     "四个步骤的顺序很关键：先存 q = p->next，否则改完 p->next 就找不到下一个结点了。",
     "画图！在纸上画出 3 个结点，按 ①②③④ 走一遍，比盯着代码看有效得多。"
   ],
-  "starterCode": "#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nint main() {\n    int n;\n    cin >> n;\n    LinkList L = new LNode;\n    L->next = nullptr;\n    LNode *r = L;\n    for (int i = 0; i < n; i++) {\n        int v; cin >> v;\n        LNode *s = new LNode;\n        s->data = v; s->next = nullptr;\n        r->next = s; r = s;\n    }\n\n    // TODO: 就地逆置\n\n    // TODO: 输出\n    return 0;\n}\n",
-  "solution": "// 参考解：头插法就地逆置\n#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n\n    LinkList L = new LNode;\n    L->next = nullptr;\n    LNode *r = L;\n    for (int i = 0; i < n; i++) {\n        int v; cin >> v;\n        LNode *s = new LNode;\n        s->data = v; s->next = nullptr;\n        r->next = s; r = s;\n    }\n\n    LNode *p = L->next, *q = nullptr;\n    L->next = nullptr;\n    while (p != nullptr) {\n        q = p->next;        // ① 记住后继\n        p->next = L->next;  // ② 接到新表头\n        L->next = p;        // ③ 成为新表头\n        p = q;              // ④ 继续\n    }\n\n    if (L->next == nullptr) {\n        cout << \"empty\\n\";\n    } else {\n        for (LNode *t = L->next; t != nullptr; t = t->next) {\n            cout << t->data << (t->next == nullptr ? '\\n' : ' ');\n        }\n    }\n    return 0;\n}\n",
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nstruct ChainNode {\n    int data;\n    ChainNode *next;\n    ChainNode(int d) : data(d), next(0) {}\n};\n\nint main() {\n    int n;\n    cin >> n;\n    ChainNode *first = 0, *rear = 0;\n    for (int i = 0; i < n; i++) {\n        int v; cin >> v;\n        ChainNode *s = new ChainNode(v);\n        if (first == 0) first = rear = s;\n        else { rear->next = s; rear = s; }\n    }\n\n    // TODO: 就地逆置（只改 next，不新建结点）\n\n    // TODO: 输出\n    return 0;\n}\n",
+  "solution": "#include <iostream>\nusing namespace std;\n\nstruct ChainNode {\n    int data;\n    ChainNode *next;\n    ChainNode(int d) : data(d), next(0) {}\n};\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n\n    ChainNode *first = 0, *rear = 0;\n    for (int i = 0; i < n; i++) {\n        int v;\n        cin >> v;\n        ChainNode *s = new ChainNode(v);\n        if (first == 0) first = rear = s;\n        else { rear->next = s; rear = s; }\n    }\n\n    // 就地逆置：把每个结点摘下来头插到新表\n    ChainNode *p = first, *q = 0;\n    first = 0;\n    while (p != 0) {\n        q = p->next;        // ① 记住后继\n        p->next = first;    // ② 头插\n        first = p;          // ③ 更新表头\n        p = q;              // ④ 继续\n    }\n\n    if (first == 0) {\n        cout << \"empty\\n\";\n        return 0;\n    }\n    for (ChainNode *t = first; t != 0; t = t->next)\n        cout << t->data << (t->next == 0 ? '\\n' : ' ');\n    return 0;\n}\n",
   "tests": [
-    { "name": "样例 1：五个元素", "input": "5\n1 2 3 4 5\n", "output": "5 4 3 2 1\n" },
-    { "name": "只有一个结点", "input": "1\n42\n", "output": "42\n" },
-    { "name": "两个结点", "input": "2\n7 8\n", "output": "8 7\n" },
-    { "name": "空表", "input": "0\n", "output": "empty\n" },
-    { "name": "含重复与负数", "input": "6\n-1 0 -1 5 5 2\n", "output": "2 5 5 -1 0 -1\n" }
+    {
+      "name": "样例 1：五个元素",
+      "input": "5\n1 2 3 4 5\n",
+      "output": "5 4 3 2 1\n"
+    },
+    {
+      "name": "只有一个结点",
+      "input": "1\n42\n",
+      "output": "42\n"
+    },
+    {
+      "name": "两个结点",
+      "input": "2\n7 8\n",
+      "output": "8 7\n"
+    },
+    {
+      "name": "空表",
+      "input": "0\n",
+      "output": "empty\n"
+    },
+    {
+      "name": "含重复与负数",
+      "input": "6\n-1 0 -1 5 5 2\n",
+      "output": "2 5 5 -1 0 -1\n"
+    }
   ],
-  "knowledgeIds": ["summary", "linkedlist"],
+  "knowledgeIds": [
+    "summary",
+    "linkedlist"
+  ],
   "timeLimitMs": 2000
 }

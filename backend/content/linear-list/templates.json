@@ -1,125 +1,93 @@
 [
   {
-    "id": "seqlist-cpp",
-    "title": "顺序表 · C++ 完整实现",
+    "id": "array-list",
+    "title": "顺序表：增删改查（数组描述）",
     "lang": "cpp",
     "level": "core",
-    "summary": "初始化、取值、查找、插入、删除、遍历，一个文件包含顺序表全部基本操作。",
-    "purpose": "期末机考、课程设计时直接改这个骨架；也可以当成背诵模板。",
-    "file": "code/seqlist.cpp",
+    "summary": "课件里的 ArrayLinearList：get / indexOf / insert / erase / output 五个操作，外加容量翻倍。",
+    "purpose": "课件第 1 章 P13~P16 就讲这一份代码，期末考「写出顺序表插入算法并分析复杂度」时按它写。",
+    "file": "code/array-list.cpp",
     "explanations": [
-      { "anchor": "typedef struct {", "span": 4, "text": "顺序表的结构 = 一个定长数组 + 一个 length。长度必须单独记录，因为 C/C++ 不会帮你记住数组里存了几个元素。" },
-      { "anchor": "bool ListInsert(SqList &L, int i, int e) {", "span": 6, "text": "插入的三个检查：位置合法、空间够、然后才移动。i 的范围是 1 ~ length+1，比删除多一个 length+1。" },
-      { "anchor": "for (int j = L.length; j >= i; j--) {", "span": 3, "text": "从后往前挪是唯一正确的方向。若从前往后，data[i-1] 会先被覆盖，后面的值全错。" },
-      { "anchor": "L.data[i - 1] = e;", "span": 2, "text": "位序 i 对应下标 i-1。这一步是每年丢分最多的地方。" },
-      { "anchor": "for (int j = i; j < L.length; j++) {", "span": 3, "text": "删除时从前往后挪：把后一个盖到前一个上，最后 length 减 1。" },
-      { "anchor": "void PrintList(const SqList &L) {", "span": 6, "text": "const 引用表示只读，既避免拷贝又防止误改。输出时空表要单独处理，否则会打印一个空行。" }
+      { "anchor": "insert(theIndex, x) 把 x 插到", "span": 3, "text": "注意下标语义：insert(2, x) 之后 x 的下标就是 2，原来的元素整体后移。这就是课件里「theIndex 是最终下标」的约定。" },
+      { "anchor": "void insert(int theIndex, const T& theElement) {", "span": 6, "text": "三个动作：检查下标 → 空间不够就扩容 → 从后往前挪出空位。顺序不能反。" },
+      { "anchor": "for (int i = listSize - 1; i >= theIndex; i--) // 从后往前挪", "span": 2, "text": "必须从后往前。若从前往后，前一个会覆盖后一个，数据就毁了。" },
+      { "anchor": "changeLength1D(element, arrayLength, 2 * arrayLength);", "span": 1, "text": "数组满了要整体搬到两倍大的新数组，这一步是 Θ(n)，但摊还到每次插入上仍接近 Θ(1)。" },
+      { "anchor": "void erase(int theIndex) {", "span": 5, "text": "删除是从前往后挪：把后面的元素依次盖到前一个位置上，最后 listSize 减 1。" },
+      { "anchor": "int indexOf(const T& theElement) const {", "span": 5, "text": "顺序查找：最好 Θ(1)、最坏 Θ(n)、平均 Θ(n)。这是数组描述无法避免的。" }
     ],
     "pitfalls": [
-      "忘记 L.length = 0，导致长度是随机值。",
-      "插入写成 j > i，少挪一个元素。",
-      "删除后没有 L.length--。"
+      "插入的合法下标是 [0, listSize]（可以插到末尾之后），删除是 [0, listSize-1]，差一个。",
+      "for 循环方向写反：插入必须从后往前，删除必须从前往后。",
+      "扩容用 new 之后忘了 delete 旧数组，内存泄漏。",
+      "insert 之后忘记 listSize++，或者 erase 之后忘记 listSize--。"
     ],
     "relatedKnowledge": ["seqlist"]
   },
   {
-    "id": "seqlist-c",
-    "title": "顺序表 · C 语言实验版",
-    "lang": "c",
-    "level": "core",
-    "summary": "和 C++ 版功能一致，改成指针传参 + malloc/free，符合学校实验报告的写法要求。",
-    "purpose": "交实验报告时用这一份，函数签名和课本一致。",
-    "file": "code/seqlist.c",
-    "explanations": [
-      { "anchor": "void InitList(SqList *L) {", "span": 3, "text": "C 没有引用，要修改实参必须传地址，函数内用 L->length 访问。调用时要写 InitList(&L)。" },
-      { "anchor": "bool ListInsert(SqList *L, int i, int e) {", "span": 6, "text": "逻辑和 C++ 完全相同，只是所有成员访问从 . 变成 ->。" },
-      { "anchor": "bool ListDelete(SqList *L, int i, int *e) {", "span": 4, "text": "要带回被删除的值，参数用 int *e，函数内写 *e = ...；调用时传 &deleted。" }
-    ],
-    "pitfalls": [
-      "调用时忘了写 &，写成 InitList(L) 会直接编译不过。",
-      "C 里 bool 要 #include <stdbool.h>，否则用 int 返回 0/1。"
-    ],
-    "relatedKnowledge": ["seqlist"]
-  },
-  {
-    "id": "linklist-cpp",
-    "title": "单链表 · C++ 完整实现（带头结点）",
+    "id": "chain",
+    "title": "单链表：增删改查（链式描述）",
     "lang": "cpp",
     "level": "core",
-    "summary": "尾插/头插建表、按位插入删除、按值查找、遍历、整表释放。",
-    "purpose": "所有链表题的基础骨架，考试时先默写这一段再改。",
-    "file": "code/linklist.cpp",
+    "summary": "课件里的 Chain / ChainNode：get、indexOf、insert、erase、析构函数，全部按模板类写。",
+    "purpose": "课件第 1 章 P26~P31。链表题的基本骨架，考试默写从这里开始。",
+    "file": "code/chain.cpp",
     "explanations": [
-      { "anchor": "typedef struct LNode {", "span": 4, "text": "LNode 是结点类型，LinkList 是指向结点的指针类型。两个名字指的是同一个结构，只是语义不同。" },
-      { "anchor": "bool InitList(LinkList &L) {", "span": 5, "text": "头结点的数据域不用，next 置空。空表的判断就是 L->next == nullptr。" },
-      { "anchor": "LNode *r = L;                       // r 始终指向表尾", "span": 9, "text": "尾插法：r 永远指向最后一个结点，新结点接在 r 后面然后 r 前移。最后不需要额外置空，因为 s->next 每次都置空了。" },
-      { "anchor": "// 头插法建表", "span": 9, "text": "头插法每次插在头结点之后，所以最终顺序和输入顺序相反。这个特性在后面做逆置时会被直接复用。" },
-      { "anchor": "while (p != nullptr && j < i - 1) {   // 找第 i-1 个结点", "span": 4, "text": "单链表只能从前往后找，而且要停在 i-1 位置，因为插入必须修改前驱的 next。j 从头结点算 0 开始。" },
-      { "anchor": "s->next = p->next;                    // 先接后断", "span": 2, "text": "先让新结点接上后面的链，再让前驱指向新结点。顺序反了会把后半条链弄丢。" },
-      { "anchor": "LNode *q = p->next;                   // 先记住要删的结点", "span": 4, "text": "删除三步：记住 q、越过 q、释放 q。少任何一步都是 bug（不释放则内存泄漏）。" },
-      { "anchor": "void DestroyList(LinkList &L) {", "span": 7, "text": "整表释放要先用 q 存住 next，再 delete p，否则释放后就取不到 next 了。" }
+      { "anchor": "template<class T> class Chain;      // 前向声明", "span": 1, "text": "ChainNode 要用 Chain 做友元，所以先声明 Chain。这是 C++ 模板里一个绕不开的细节。" },
+      { "anchor": "class ChainNode {", "span": 9, "text": "结点只有两个成员：data（数据域）和 next（链接域）。friend 让 Chain 能直接改这两个私有成员。" },
+      { "anchor": "T& get(int theIndex) const {", "span": 5, "text": "链表没有「地址计算」，只能从头一步一步走 theIndex 步，所以是 Θ(theIndex)。这是链表相对数组最大的劣势。" },
+      { "anchor": "void erase(int theIndex) {", "span": 6, "text": "删除分两种情况：删首结点（没有前驱，单独处理）和删中间结点（先找前驱，再越过它）。" },
+      { "anchor": "for (int i = 0; i < theIndex - 1; i++)", "span": 2, "text": "走 theIndex-1 步让 p 停在待删结点的前驱上。这三步是重点：找到前驱、改前驱的 next、释放被删结点。" },
+      { "anchor": "void insert(int theIndex, const T& theElement) {", "span": 8, "text": "插入同样分首结点和中间：插在表头就是 new 一个结点并把 firstNode 指过去；否则改前驱的 next。" },
+      { "anchor": "Chain<T>::~Chain() {", "span": 8, "text": "析构必须逐结点 delete，否则整条链表的内存都泄漏。注意先用 next 存住下一个结点，再 delete 当前结点。" }
     ],
     "pitfalls": [
-      "插入时先写 p->next = s，把后面的链子丢了。",
-      "删除时直接 p->next = p->next->next，没有释放被删结点。",
-      "遍历条件写成 p->next != nullptr，导致最后一个结点没被访问。"
+      "erase 里先 p->next = p->next->next 再 delete，顺序反了就找不到要删的结点了（要先保存 deleteNode）。",
+      "忘记 delete 被删结点，内存泄漏；链表和数组最大的差别就在这里。",
+      "遍历条件写成 p->next != 0，最后一个结点会被漏掉，应该写 p != 0。",
+      "析构里直接 delete firstNode，后面的结点全泄漏。"
     ],
     "relatedKnowledge": ["linkedlist"]
   },
   {
-    "id": "linklist-c",
-    "title": "单链表 · C 语言实验版",
-    "lang": "c",
+    "id": "circular-doubly",
+    "title": "循环链表与双向链表",
+    "lang": "cpp",
     "level": "core",
-    "summary": "malloc/free 版本的单链表，函数参数用指针，符合实验报告习惯。",
-    "purpose": "数据结构实验课交作业用。",
-    "file": "code/linklist.c",
+    "summary": "尾指针表示的循环链表（约瑟夫环），以及双向链表的四指针插入与删除。",
+    "purpose": "课件第 1 章 P33~P37。考「用循环链表解约瑟夫」和「双向链表插入要改几个指针」时用这一份。",
+    "file": "code/circular-doubly.cpp",
     "explanations": [
-      { "anchor": "LinkList InitList(void) {", "span": 5, "text": "malloc 之后一定要检查是否为 NULL，并立刻把 next 置空，否则 next 是野指针。" },
-      { "anchor": "s = (LNode *)malloc(sizeof(LNode));", "span": 5, "text": "C 里 malloc 返回 void*，要强制转换；C++ 里不需要转换，但也不报错。" },
-      { "anchor": "free(q);                          /* C 用 free */", "span": 1, "text": "malloc 配 free，new 配 delete，不能混用。" }
+      { "anchor": "void insert(const T& x) {", "span": 11, "text": "循环链表只记尾指针 rear：空表时自己指自己；非空时新结点接到 rear 后面，再让 rear 前移。这样头尾访问都是 Θ(1)。" },
+      { "anchor": "void josephus(int n, int m) {", "span": 10, "text": "外层 n 轮、内层每轮走 m-1 步，所以是 Θ(mn)。出列时要让前驱越过 p，再从下一个人继续。" },
+      { "anchor": "void insertAfter(DNode<T>* p, DNode<T>* s) {", "span": 6, "text": "双向链表插入要改四个指针，顺序只有一种是对的：先接后面的两个，最后改 p->next。否则就找不到原后继了。" },
+      { "anchor": "void eraseNode(DNode<T>* p) {", "span": 5, "text": "双向链表删除已知结点是 Θ(1)：不用再找前驱，让前驱和后继互相指过去即可。" }
     ],
     "pitfalls": [
-      "忘记 free，长时间运行会吃光内存。",
-      "free 之后还继续用那个指针（悬空指针）。"
+      "循环链表的判空是 rear == 0（尾指针表示）或 head->next == head（头结点表示），别用 == NULL 判 head->next。",
+      "约瑟夫环里删除结点后忘记把 p 指向 pre->next，会访问到已释放的内存。",
+      "双向链表插入时先改了 p->next，导致找不到原后继，② 那一步失效。"
     ],
-    "relatedKnowledge": ["linkedlist"]
+    "relatedKnowledge": ["circular"]
   },
   {
-    "id": "reverse",
-    "title": "单链表就地逆置",
+    "id": "indirect",
+    "title": "间接寻址：数组的目录 + 链表的灵活",
     "lang": "cpp",
     "level": "exam",
-    "summary": "只改指针、不新建结点，四行循环完成逆置。",
-    "purpose": "期末大题 / 考研 408 高频。背下这四步，考场直接写。",
-    "file": "code/reverse.cpp",
+    "summary": "元素动态分配，但指针集中放在一个数组里，定位 Θ(1)、插入删除只移动指针。",
+    "purpose": "课件第 1 章 P43~P51。期末选择题常问「间接寻址相比数组和链表分别好在哪」。",
+    "file": "code/indirect.cpp",
     "explanations": [
-      { "anchor": "L->next = nullptr;       // 头结点断开，成为新表的头", "span": 1, "text": "先把头结点和新表断开，之后 L->next 就代表\"已经逆置好的部分\"。" },
-      { "anchor": "q = p->next;         // ① 先记住下一个", "span": 4, "text": "①记后继 ②当前结点指向新表头 ③头结点指向当前结点 ④p 后移。这四步的顺序不能换，尤其是 ① 必须在 ② 之前。" }
+      { "anchor": "T** table;     // 指针数组（目录）", "span": 1, "text": "这是间接寻址的核心：table 里存的是元素的地址，不是元素本身。所以挪动 table 里的指针就等于挪动元素顺序。" },
+      { "anchor": "bool find(int k, T& x) const {", "span": 5, "text": "定位只要一次数组寻址 + 一次解引用，Θ(1)，和顺序表一样快。" },
+      { "anchor": "bool erase(int k, T& x) {", "span": 8, "text": "删除时元素本身不用搬，只把后面的指针往前挪一格：Θ(length - k)。比数组描述省掉了搬运元素的开销。" },
+      { "anchor": "for (int i = length - 1; i >= k; i--)", "span": 2, "text": "插入同理：指针整体后移一格，再把新元素的地址放进空出来的位置。" }
     ],
     "pitfalls": [
-      "忘记先存 q = p->next，改完 p->next 就找不到后继了。",
-      "循环条件写成 p->next != nullptr，最后一个结点处理不到。"
+      "析构时既要 delete 每个元素，也要 delete[] table，两步都不能少。",
+      "table 的容量是固定的，满了要扩容（课件里直接抛 NoMem）。",
+      "别把 table[i] 当成元素值，它是指针，取值要写 *table[i]。"
     ],
-    "relatedKnowledge": ["summary", "linkedlist"]
-  },
-  {
-    "id": "merge",
-    "title": "合并两个有序单链表",
-    "lang": "cpp",
-    "level": "exam",
-    "summary": "双指针归并，复用原结点，不额外申请空间。",
-    "purpose": "归并排序的基础；也是\"链表 + 双指针\"的典型题。",
-    "file": "code/merge.cpp",
-    "explanations": [
-      { "anchor": "LNode *r = A;                       // r 是结果表的尾指针", "span": 1, "text": "复用 A 的头结点作为结果表头，r 始终指向结果表尾，这样每次接结点都是 O(1)。" },
-      { "anchor": "r->next = (p != nullptr) ? p : q;   // 剩下的一段直接接上", "span": 1, "text": "循环结束时必有一条链先空，把另一条整段接上即可，不需要再逐个复制。" },
-      { "anchor": "delete B;                           // B 的头结点已经没用了", "span": 1, "text": "B 的结点已经被接到 A 上，只有 B 的头结点是多余的，释放它避免泄漏。" }
-    ],
-    "pitfalls": [
-      "比较时用了 < 而不是 <=，导致相等元素的相对顺序改变（不稳定）。",
-      "忘记把剩余链段接上，结果少了几个元素。"
-    ],
-    "relatedKnowledge": ["summary"]
+    "relatedKnowledge": ["indirect", "summary"]
   }
 ]

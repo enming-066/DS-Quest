@@ -39,29 +39,30 @@ group: 基础
 
 ## 抽象数据类型 ADT
 
-课本上会写一大段 ADT 定义，看着吓人，其实就是"这个结构能做什么事"，不含具体实现。
+课件第 1 章 P10 给出的 ADT 是这样的（注意它和后面代码里的函数名一一对应）：
 
 ```
-ADT List {
-    数据对象：D = { a_i | a_i ∈ ElemSet, i = 1,2,...,n, n ≥ 0 }
-    数据关系：R = { <a_{i-1}, a_i> | i = 2,...,n }
-    基本操作：
-        InitList(&L)        初始化，构造一个空表
-        DestroyList(&L)     销毁
-        ClearList(&L)       清空
-        ListEmpty(L)        判空
-        ListLength(L)       求表长
-        GetElem(L, i, &e)   取第 i 个元素
-        LocateElem(L, e)    查找 e 的位置
-        PriorElem / NextElem 求前驱 / 后继
-        ListInsert(&L, i, e) 在第 i 个位置插入 e
-        ListDelete(&L, i, &e) 删除第 i 个元素并返回它
-        TraverseList(L)     遍历
-} ADT List
+抽象数据类型 LinearList {
+    实例（数据 D 和关系 S）
+        0 个或多个元素的有序集合
+    操作
+        create()     创建一个空线性表
+        destroy()    删除表
+        empty()      表空返回 true，否则 false
+        size()       返回表中元素个数
+        get(k)       返回下标为 k 的元素
+        indexOf(x)   返回 x 在表中的下标，不在表中返回 -1
+        delete(k)    删除下标为 k 的元素，其后元素下标减 1
+        insert(k,x)  把 x 插入到下标 k 的位置，其后元素下标加 1
+        output()     从起始位置到终止位置输出元素
+}
 ```
+
+课件特别注明：**ADT 可以根据实际应用自行定义**。所以考试里看到 `InitList`、`ListInsert` 这类名字也别慌——那是另一本教材（严蔚敏版）的命名，语义和这里的 create/insert 一样。
 
 :::exam 常见考法
-考试里问"线性表的基本操作有哪些"，答出**初始化、插入、删除、查找、遍历、求长度**这六个就够拿分。特别注意 `&L` 这个符号：它表示**引用传参**（C++）或**传地址**（C 用指针），意思是函数内部要修改表本身。这是 C 语言和 C++ 在写法上最大的分歧点。
+考试里问"线性表的基本操作有哪些"，答出**建表、判空、求长、取值、查找、插入、删除、遍历**就够拿分。
+注意术语要和课件对齐：课件用 `get(k)` / `indexOf(x)` / `insert(k,x)` / `erase(k)`，而严蔚敏教材用 `GetElem` / `LocateElem` / `ListInsert` / `ListDelete`。两种写法指的是同一组操作。
 :::
 
 ## 位序 vs 数组下标（提前预警）

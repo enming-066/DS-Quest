@@ -2,9 +2,13 @@
   "id": "ll-06",
   "title": "合并两个有序单链表",
   "difficulty": 3,
-  "tags": ["单链表", "归并", "双指针"],
+  "tags": [
+    "单链表",
+    "归并",
+    "双指针"
+  ],
   "summary": "两个非递减链表合成一个，复用原结点，不额外开空间。",
-  "statement": "读入两个**非递减**序列，分别用尾插法建立两个带头结点的单链表，然后把它们合并成一个仍然非递减的链表，输出合并结果。\n\n要求：\n- 复用原来的结点，不要新建结点；\n- 时间复杂度 O(n + m)。\n\n如果两个表都为空，输出 `empty`。",
+  "statement": "读入两个**非递减**序列，分别用尾插法建立两个单链表，然后把它们合并成一个仍然非递减的链表，输出合并结果。\n\n要求：\n- 复用原来的结点，不要新建结点；\n- 时间复杂度 O(n + m)。\n\n如果两个表都为空，输出 `empty`。",
   "inputFormat": "第一行一个整数 n，第二行 n 个整数（非递减）。\n第三行一个整数 m，第四行 m 个整数（非递减）。\n（n 或 m 为 0 时对应行为空）",
   "outputFormat": "一行，合并后的序列，空格分隔；两个表都空则输出 `empty`。",
   "constraints": "0 ≤ n, m ≤ 1000，-10^9 ≤ 元素 ≤ 10^9。",
@@ -26,15 +30,37 @@
     "循环结束的条件是 p == nullptr 或 q == nullptr，此时必有一条链还没走完，直接整段接上。",
     "比较用 <= 而不是 <，可以让合并保持稳定（相等时先取前一个表的）。"
   ],
-  "starterCode": "#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nLinkList build(int n) {\n    LinkList L = new LNode;\n    L->next = nullptr;\n    LNode *r = L;\n    for (int i = 0; i < n; i++) {\n        int v; cin >> v;\n        LNode *s = new LNode;\n        s->data = v; s->next = nullptr;\n        r->next = s; r = s;\n    }\n    return L;\n}\n\nint main() {\n    int n, m;\n    cin >> n;\n    LinkList A = build(n);\n    cin >> m;\n    LinkList B = build(m);\n\n    // TODO: 合并 A 和 B，输出结果\n\n    return 0;\n}\n",
-  "solution": "// 参考解：双指针归并\n#include <iostream>\nusing namespace std;\n\nstruct LNode {\n    int data;\n    LNode *next;\n};\n\ntypedef LNode *LinkList;\n\nLinkList build(int n) {\n    LinkList L = new LNode;\n    L->next = nullptr;\n    LNode *r = L;\n    for (int i = 0; i < n; i++) {\n        int v; cin >> v;\n        LNode *s = new LNode;\n        s->data = v; s->next = nullptr;\n        r->next = s; r = s;\n    }\n    return L;\n}\n\nint main() {\n    int n, m;\n    if (!(cin >> n)) return 0;\n    LinkList A = build(n);\n    cin >> m;\n    LinkList B = build(m);\n\n    LNode *p = A->next, *q = B->next, *r = A;\n    while (p != nullptr && q != nullptr) {\n        if (p->data <= q->data) { r->next = p; r = p; p = p->next; }\n        else                    { r->next = q; r = q; q = q->next; }\n    }\n    r->next = (p != nullptr) ? p : q;\n    delete B;\n\n    if (A->next == nullptr) {\n        cout << \"empty\\n\";\n    } else {\n        for (LNode *t = A->next; t != nullptr; t = t->next) {\n            cout << t->data << (t->next == nullptr ? '\\n' : ' ');\n        }\n    }\n    return 0;\n}\n",
+  "starterCode": "#include <iostream>\nusing namespace std;\n\nstruct ChainNode {\n    int data;\n    ChainNode *next;\n    ChainNode(int d) : data(d), next(0) {}\n};\n\nChainNode* build(int n) {\n    ChainNode *first = 0, *rear = 0;\n    for (int i = 0; i < n; i++) {\n        int v; cin >> v;\n        ChainNode *s = new ChainNode(v);\n        if (first == 0) first = rear = s;\n        else { rear->next = s; rear = s; }\n    }\n    return first;\n}\n\nint main() {\n    int n, m;\n    cin >> n;\n    ChainNode *A = build(n);\n    cin >> m;\n    ChainNode *B = build(m);\n\n    // TODO: 双指针合并两个有序链表并输出\n\n    return 0;\n}\n",
+  "solution": "#include <iostream>\nusing namespace std;\n\nstruct ChainNode {\n    int data;\n    ChainNode *next;\n    ChainNode(int d) : data(d), next(0) {}\n};\n\nChainNode* build(int n) {\n    ChainNode *first = 0, *rear = 0;\n    for (int i = 0; i < n; i++) {\n        int v;\n        cin >> v;\n        ChainNode *s = new ChainNode(v);\n        if (first == 0) first = rear = s;\n        else { rear->next = s; rear = s; }\n    }\n    return first;\n}\n\nint main() {\n    int n, m;\n    if (!(cin >> n)) return 0;\n    ChainNode *A = build(n);\n    cin >> m;\n    ChainNode *B = build(m);\n\n    ChainNode *p = A, *q = B, *head = 0, *tail = 0;\n    while (p != 0 && q != 0) {\n        ChainNode *pick;\n        if (p->data <= q->data) { pick = p; p = p->next; }\n        else { pick = q; q = q->next; }\n        if (head == 0) head = tail = pick;\n        else { tail->next = pick; tail = pick; }\n    }\n    ChainNode *rest = (p != 0) ? p : q;    // 没走完的那一段\n    if (head == 0) head = rest;\n    else tail->next = rest;\n\n    if (head == 0) {\n        cout << \"empty\\n\";\n        return 0;\n    }\n    for (ChainNode *t = head; t != 0; t = t->next)\n        cout << t->data << (t->next == 0 ? '\\n' : ' ');\n    return 0;\n}\n",
   "tests": [
-    { "name": "样例 1：交叉", "input": "4\n1 3 5 7\n5\n2 4 6 8 10\n", "output": "1 2 3 4 5 6 7 8 10\n" },
-    { "name": "第二个表为空", "input": "3\n1 2 3\n0\n\n", "output": "1 2 3\n" },
-    { "name": "两个表都空", "input": "0\n\n0\n\n", "output": "empty\n" },
-    { "name": "有重复元素", "input": "3\n1 2 2\n3\n2 3 3\n", "output": "1 2 2 2 3 3\n" },
-    { "name": "第一个表更短且全小", "input": "2\n1 2\n4\n10 20 30 40\n", "output": "1 2 10 20 30 40\n" }
+    {
+      "name": "样例 1：交叉",
+      "input": "4\n1 3 5 7\n5\n2 4 6 8 10\n",
+      "output": "1 2 3 4 5 6 7 8 10\n"
+    },
+    {
+      "name": "第二个表为空",
+      "input": "3\n1 2 3\n0\n\n",
+      "output": "1 2 3\n"
+    },
+    {
+      "name": "两个表都空",
+      "input": "0\n\n0\n\n",
+      "output": "empty\n"
+    },
+    {
+      "name": "有重复元素",
+      "input": "3\n1 2 2\n3\n2 3 3\n",
+      "output": "1 2 2 2 3 3\n"
+    },
+    {
+      "name": "第一个表更短且全小",
+      "input": "2\n1 2\n4\n10 20 30 40\n",
+      "output": "1 2 10 20 30 40\n"
+    }
   ],
-  "knowledgeIds": ["summary"],
+  "knowledgeIds": [
+    "summary"
+  ],
   "timeLimitMs": 2000
 }
