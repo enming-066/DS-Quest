@@ -62,6 +62,11 @@ class CoachRequest(BaseModel):
     result: dict[str, Any] | None = None
 
 
+class FillRequest(BaseModel):
+    problemId: str
+    answers: dict[str, str] = Field(default_factory=dict)
+
+
 class KnowledgeDone(BaseModel):
     moduleId: str
     knowledgeId: str
@@ -203,16 +208,12 @@ def _award(problem: dict[str, Any], progress: dict[str, Any], result: dict[str, 
     return {"xpGained": gained, "xp": int(progress.get("xp", 0))}
 
 
-@app.post("/api/judge")
-def do_judge(request: JudgeRequest) -> dict[str, Any]:
-    problem = library.problem(request.problemId)
-    if not problem:
-        raise HTTPException(404, "题目不存在")
-    lang = request.lang if request.lang in ("cpp", "c") else "cpp"
-    result = judge_submission(problem, request.code, lang)
+def _run_and_record(problem: dict[str, Any], code: str, lang: str) -> dict[str, Any]:
+    """判题 + 记录提交 / 经验 / 错题，完整题和填空题共用。"""
+    result = judge_submission(problem, code, lang)
 
     submission_id = store.record_submission(
-        problem["id"], lang, request.code, result["verdict"],
+        problem["id"], lang, code, result["verdict"],
         result["passed"], result["total"], result["timeMs"],
     )
     result["submissionId"] = submission_id
@@ -231,8 +232,42 @@ def do_judge(request: JudgeRequest) -> dict[str, Any]:
         "moduleCleared": problem.get("moduleId") in progress.get("moduleCleared", []),
     }
     # 免费的本土错因检查，前端可以直接展示，不消耗 API
-    result["staticReview"] = ai.static_review(request.code, result["verdict"], result, problem)
+    result["staticReview"] = ai.static_review(code, result["verdict"], result, problem)
     result["hints"] = ai.local_hints(problem, result["verdict"])
+    return result
+
+
+@app.post("/api/judge")
+def do_judge(request: JudgeRequest) -> dict[str, Any]:
+    problem = library.problem(request.problemId)
+    if not problem:
+        raise HTTPException(404, "题目不存在")
+    if problem.get("type") == "fill":
+        raise HTTPException(400, "这是一道填空题，请用 /api/judge/fill 提交")
+    lang = request.lang if request.lang in ("cpp", "c") else "cpp"
+    return _run_and_record(problem, request.code, lang)
+
+
+@app.post("/api/judge/fill")
+def do_judge_fill(request: FillRequest) -> dict[str, Any]:
+    problem = library.problem(request.problemId)
+    if not problem:
+        raise HTTPException(404, "题目不存在")
+    if problem.get("type") != "fill":
+        raise HTTPException(400, "这不是填空题")
+
+    code = problem.get("fillCode", "")
+    if not code:
+        raise HTTPException(500, "这道题的填空模板缺失")
+
+    # 把 /*BLANK1*/ 之类替换成学生填的内容
+    for blank in problem.get("blanks", []):
+        marker = f"/*BLANK{blank['id']}*/"
+        code = code.replace(marker, request.answers.get(str(blank["id"]), "")
+                            or "/*__没填__*/")
+
+    result = _run_and_record(problem, code, "cpp")
+    result["assembledCode"] = code
     return result
 
 

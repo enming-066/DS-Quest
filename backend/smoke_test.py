@@ -120,7 +120,7 @@ def main() -> int:
     check("知识点打卡", res5["xpGained"] >= 0)
     _, raw = get("/api/stats")
     stats = json.loads(raw)
-    check("统计接口", stats["problemsSolved"] >= 1 and stats["totalProblems"] == 26)
+    check("统计接口", stats["problemsSolved"] >= 1 and stats["totalProblems"] == 27)
 
     print("== AI（未配置 Key 时应优雅降级） ==")
     _, res6 = post("/api/ai/coach", {"problemId": "ll-01", "code": good, "level": 2})

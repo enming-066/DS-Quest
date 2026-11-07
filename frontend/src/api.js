@@ -44,6 +44,7 @@ export const api = {
   module: (id) => request(`/modules/${encodeURIComponent(id)}`),
   problem: (id) => request(`/problems/${encodeURIComponent(id)}`),
   judge: (payload) => post('/judge', payload),
+  judgeFill: (payload) => post('/judge/fill', payload),
   coach: (payload) => post('/ai/coach', payload),
   budget: () => request('/ai/budget'),
   markKnowledge: (moduleId, knowledgeId) =>

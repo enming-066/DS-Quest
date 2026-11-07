@@ -5,6 +5,7 @@ import Icon from '../components/Icon.vue'
 import MarkdownView from '../components/MarkdownView.vue'
 import CodeEditor from '../components/CodeEditor.vue'
 import CodeViewer from '../components/CodeViewer.vue'
+import FillEditor from '../components/FillEditor.vue'
 import VerdictPanel from '../components/VerdictPanel.vue'
 import AiCoach from '../components/AiCoach.vue'
 import { api } from '../api'
@@ -26,6 +27,7 @@ const hintShown = ref(1)
 const problemId = computed(() => route.params.problemId)
 const moduleId = computed(() => route.params.moduleId)
 const draftKey = computed(() => `dsq:draft:${problemId.value}`)
+const isFill = computed(() => problem.value?.type === 'fill')
 
 const difficultyDots = computed(() => {
   const n = problem.value?.difficulty || 1
@@ -70,7 +72,7 @@ onMounted(load)
 watch(problemId, load)
 
 watch([code, lang], () => {
-  if (!problem.value) return
+  if (!problem.value || isFill.value) return
   localStorage.setItem(
     draftKey.value,
     JSON.stringify({ code: code.value, lang: 'cpp', at: Date.now() })
@@ -81,6 +83,25 @@ function resetCode() {
   if (!problem.value) return
   code.value = problem.value.starterCode
   toast('已恢复成初始模板', 'info', 1600)
+}
+
+async function submitFill(answers) {
+  if (submitting.value || !problem.value) return
+  submitting.value = true
+  result.value = null
+  try {
+    const res = await api.judgeFill({ problemId: problemId.value, answers })
+    result.value = res
+    applyJudgeProgress(res, problemId.value)
+    if (res.verdict === 'AC') refreshBootstrap().catch(() => {})
+    if (window.innerWidth < 1000) {
+      document.querySelector('.verdict')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  } catch (err) {
+    toast(err.message || '提交失败', 'error')
+  } finally {
+    submitting.value = false
+  }
 }
 
 async function submit() {
@@ -247,18 +268,29 @@ async function submit() {
         <!-- 右：编辑器 + 结果 -->
         <section class="workspace">
           <div class="ws-bar">
-            <span class="ws-tip">C++ · Ctrl + Enter 提交</span>
+            <span class="ws-tip">{{ isFill ? '填空模式 · 把空补全后提交' : 'C++ · Ctrl + Enter 提交' }}</span>
             <div class="grow"></div>
-            <button class="btn btn-sm btn-ghost" @click="resetCode">
-              <Icon name="refresh" :size="14" /> 恢复模板
-            </button>
-            <button class="btn btn-sm btn-primary" :disabled="submitting" @click="submit">
-              <Icon name="play" :size="14" />
-              {{ submitting ? '判题中…' : '提交判题' }}
-            </button>
+            <template v-if="!isFill">
+              <button class="btn btn-sm btn-ghost" @click="resetCode">
+                <Icon name="refresh" :size="14" /> 恢复模板
+              </button>
+              <button class="btn btn-sm btn-primary" :disabled="submitting" @click="submit">
+                <Icon name="play" :size="14" />
+                {{ submitting ? '判题中…' : '提交判题' }}
+              </button>
+            </template>
           </div>
 
+          <FillEditor
+            v-if="isFill"
+            :code="problem.fillCode || ''"
+            :blanks="problem.blanks || []"
+            :submitting="submitting"
+            :filename="`${problem.id}-fill.cpp`"
+            @submit="submitFill"
+          />
           <CodeEditor
+            v-else
             v-model="code"
             language="cpp"
             :height="400"

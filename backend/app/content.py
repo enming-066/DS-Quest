@@ -149,6 +149,12 @@ class ContentLibrary:
                 problem.setdefault("moduleId", module_id)
                 problem.setdefault("file", path.name)
                 problem["tests"] = problem.get("tests", [])
+                # 填空题型：代码正文放在单独的 .cpp 文件里，里面用 /*BLANK1*/ 标记空位
+                if problem.get("fillFile"):
+                    fill_path = module_dir / problem["fillFile"]
+                    problem["fillCode"] = (
+                        fill_path.read_text(encoding="utf-8") if fill_path.exists() else ""
+                    )
                 problem["samples"] = problem.get("samples", [])
                 problem.setdefault("timeLimitMs", 0)
                 self.problems[problem["id"]] = problem
@@ -184,11 +190,17 @@ class ContentLibrary:
         return self.problems.get(problem_id)
 
     def public_problem(self, problem_id: str) -> dict[str, Any] | None:
-        """去掉隐藏测试点的完整题目（发给前端）。"""
+        """去掉隐藏测试点、并且**不泄露填空答案**的题目（发给前端）。"""
         problem = self.problems.get(problem_id)
         if not problem:
             return None
         data = {k: v for k, v in problem.items() if k != "tests"}
+        if problem.get("type") == "fill":
+            # 只给空位的编号和提示，答案留在后端
+            data["blanks"] = [
+                {"id": b["id"], "placeholder": b.get("placeholder", ""), "hint": b.get("hint", "")}
+                for b in problem.get("blanks", [])
+            ]
         data["totalTests"] = len(problem.get("tests", []))
         return data
 

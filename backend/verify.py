@@ -51,7 +51,10 @@ def verify_problems() -> int:
             pid = problem["id"]
             print(f"\n[{pid}] {problem['title']}  ({len(problem.get('tests', []))} 个测试点)")
 
-            for field in ("statement", "inputFormat", "outputFormat", "hints", "solution", "starterCode"):
+            is_fill = problem.get("type") == "fill"
+            required = ("statement", "inputFormat", "outputFormat", "hints")
+            required += ("fillCode", "blanks") if is_fill else ("solution", "starterCode")
+            for field in required:
                 if not problem.get(field):
                     bad(f"缺少字段 {field}")
                     failures += 1
@@ -62,7 +65,14 @@ def verify_problems() -> int:
                 if not any(k["id"] == kid for k in module["knowledge"]):
                     warn(f"knowledgeIds 里的 {kid} 在本章找不到")
 
-            solution = problem.get("solution", "")
+            if is_fill:
+                # 填空：把标准答案填进去，再当成普通程序判题
+                code = problem.get("fillCode", "")
+                for blank in problem.get("blanks", []):
+                    code = code.replace(f"/*BLANK{blank['id']}*/", blank.get("answer", ""))
+                solution = code
+            else:
+                solution = problem.get("solution", "")
             compiled = judge.compile_source(solution, "cpp")
             if not compiled.ok:
                 bad("参考解编译失败：")
