@@ -1,0 +1,165 @@
+[
+  {
+    "id": "template",
+    "title": "template<class T>：把 int 换成 T",
+    "oneLiner": "同一个类/函数，可以存 int、也可以存 double，写一次就够。",
+    "why": "老师的顺序表、链表、栈、队列全都是模板类，因为数据结构要和「存什么类型」解耦。",
+    "example": "template<class T>\nclass Box {\n    T value;          // T 先当占位符\n};\n\nBox<int> a;      // 这里 T = int\nBox<double> b;   // 这里 T = double",
+    "cEquiv": "C 里没有模板，只能每一种类型写一遍，或者用 void* + 强制转换。",
+    "pitfalls": [
+      "T 只是类型占位符，不能对它做 T + 1（除非类型支持）。",
+      "模板的声明和实现通常要写在同一个头文件里。",
+      "看到 Chain<int> 就读作「元素类型是 int 的链」"
+    ],
+    "related": ["chain", "array-list"]
+  },
+  {
+    "id": "pointer",
+    "title": "T* p：指针就是存地址的变量",
+    "oneLiner": "p 里放的是一个地址，*p 才是那个地址上的东西。",
+    "why": "链表的每个结点都要指向下一个结点，靠的就是指针。",
+    "example": "int x = 5;\nint* p = &x;    // p 存 x 的地址\ncout << *p;     // 输出 5（解引用）\n*p = 9;         // 通过 p 改 x\ncout << x;      // 9",
+    "cEquiv": "C 和 C++ 完全一样，这里没有区别。",
+    "pitfalls": [
+      "声明里的 * 表示「这是指针」，不在声明里出现时 * 表示「取地址上的值」。",
+      "没初始化的指针是野指针，解引用会崩。",
+      "指针 +1 不是加 1 个字节，是加一个元素的大小。"
+    ],
+    "related": ["chain", "indirect"]
+  },
+  {
+    "id": "arrow-dot",
+    "title": "p->next 和 p.next 的区别",
+    "oneLiner": "p 是指针就用 ->，p 是对象本身就用 .",
+    "why": "看链表的代码时，一半的时间都在跟这两个符号打交道。",
+    "example": "ChainNode<int> node(5);\nChainNode<int>* p = &node;\n\nnode.data;    // 对象用 .\np->data;      // 指针用 ->（等价于 (*p).data）",
+    "cEquiv": "C 里也是 p->data 和 node.data，规则相同。",
+    "pitfalls": [
+      "对对象用 -> 会编译报错，对指针用 . 也会报错。",
+      "p->next->next 表示「下一个结点的下一个」，前提是 p->next 不为空。"
+    ],
+    "related": ["chain", "linkstack", "linkqueue"]
+  },
+  {
+    "id": "reference",
+    "title": "T& r：引用是「别名」，不是取地址",
+    "oneLiner": "在参数里写 T& 表示「传进来的是原对象本身，不是拷贝」。",
+    "why": "老师代码里到处都是 insert(const T& x)、T& get(int i)，不搞懂就看不懂函数签名。",
+    "example": "void add(int& x) { x++; }   // 引用：改的是原变量\nvoid add2(int x)  { x++; }   // 值传递：改的是副本\n\nint a = 1;\nadd(a);    // a 变成 2\nadd2(a);   // a 还是 2",
+    "cEquiv": "C 里等价于传指针：void add(int* x) { (*x)++; }，调用写 add(&a)。\n所以看到 & 慌了，就想「它其实是 C 里的指针」。",
+    "pitfalls": [
+      "& 出现在声明里（int& r）是引用；出现在表达式里（&a）是取地址。",
+      "函数参数用 const T& 表示「我不改它，也不想拷贝一份」。",
+      "引用必须初始化，不能先声明再赋值。"
+    ],
+    "related": ["array-list", "indirect"]
+  },
+  {
+    "id": "new-delete",
+    "title": "new / delete：手工申请、手工释放",
+    "oneLiner": "new 在堆上造一个对象并返回它的地址，delete 把它还回去。",
+    "why": "链表每个结点都是 new 出来的；不懂这个就看不懂析构函数为什么那么写。",
+    "example": "ChainNode<int>* p = new ChainNode<int>(5);  // 堆上造结点\n// ... 用完之后\ndelete p;                                   // 还回去\n\nint* arr = new int[10];   // 数组用 new[]\ndelete[] arr;             // 必须用 delete[]",
+    "cEquiv": "new ≈ malloc，delete ≈ free。区别：new 会调用构造函数，delete 会调用析构函数。",
+    "pitfalls": [
+      "new[] 必须配 delete[]，配错是未定义行为。",
+      "delete 之后指针还在，但指向的内存已经没了（悬空指针），不能再访问。",
+      "忘了 delete 就是内存泄漏——链表析构函数存在的意义就是这个。"
+    ],
+    "related": ["chain", "linkqueue"]
+  },
+  {
+    "id": "class",
+    "title": "class 与 public / private",
+    "oneLiner": "class 把「数据」和「操作这些数据的函数」装在一起，private 的成员外面碰不到。",
+    "why": "老师的每一份代码都是类，不是一堆散函数。",
+    "example": "template<class T>\nclass Chain {\npublic:                    // 外面能调用\n    void insert(int i, const T& x);\nprivate:                   // 外面不能碰，只能内部用\n    ChainNode<T>* firstNode;\n    int listSize;\n};",
+    "cEquiv": "C 里只能用 struct 装数据，函数是独立的，靠传指针关联起来。",
+    "pitfalls": [
+      "class 默认是 private，struct 默认是 public。",
+      "类定义最后要加分号（`};`），漏了会报 expected ';'。",
+      "构造函数没有返回类型，名字和类名一样。"
+    ],
+    "related": ["array-list", "chain"]
+  },
+  {
+    "id": "ctor-dtor",
+    "title": "构造函数 / 析构函数：建对象和毁对象时自动跑",
+    "oneLiner": "构造：new 的时候自动执行；析构：delete 或对象离开作用域时自动执行。",
+    "why": "链表析构函数的 while 循环是必考点，也是内存泄漏的根源。",
+    "example": "ArrayLinearList(int cap = 10) {   // 构造函数\n    arrayLength = cap;\n    element = new T[cap];\n    listSize = 0;\n}\n~ArrayLinearList() {              // 析构函数\n    delete[] element;\n}",
+    "cEquiv": "C 里没有这回事，全靠你自己记得调用 init() 和 destroy()。",
+    "pitfalls": [
+      "析构函数前面有个 ~，没有参数。",
+      "忘了写析构 → 内存泄漏；析构里 delete 了不该 delete 的 → 崩溃。",
+      "构造函数里没初始化 listSize，后面全是随机值。"
+    ],
+    "related": ["array-list", "chain", "circular-queue"]
+  },
+  {
+    "id": "double-pointer",
+    "title": "T** p：指针的指针（间接寻址用）",
+    "oneLiner": "p 指向一个「存着地址的变量」，所以要 *p 拿到 T*，再 **p 拿到 T。",
+    "why": "间接寻址那张「目录表」就是 T** table；链表里也有 ChainNode<T>** 的写法。",
+    "example": "T** table = new T*[10];\n\ntable[0] = new T(5);   // 目录第 0 格指向一个元素\n*table[0];             // 拿到 5\ndelete table[0];\ndelete[] table;",
+    "cEquiv": "C 里就是 T**，二维指针，含义完全一样。",
+    "pitfalls": [
+      "别把 table[i] 当成元素值，它是地址。",
+      "new T*[n] 只是分配了指针数组，里面每个指针还要单独 new。"
+    ],
+    "related": ["indirect"]
+  },
+  {
+    "id": "null",
+    "title": "NULL / 0 / nullptr：空指针",
+    "oneLiner": "都表示「不指向任何地方」，现代 C++ 推荐写 nullptr。",
+    "why": "链表判空、遍历结束条件全靠它。",
+    "example": "ChainNode<int>* p = nullptr;\nif (p == nullptr) cout << \"空\";\n\nwhile (p != nullptr) p = p->next;   // 遍历到尾巴",
+    "cEquiv": "C 里写 NULL 或 0，含义相同。",
+    "pitfalls": [
+      "空指针不能解引用（p->data 会崩）。",
+      "判断空表：不带头结点看 firstNode == nullptr；带头结点看 head->next == nullptr。"
+    ],
+    "related": ["chain"]
+  },
+  {
+    "id": "throw",
+    "title": "throw / try / catch：出错就抛",
+    "oneLiner": "检查到非法输入时 throw 一个异常，调用方 catch 住，程序不会直接崩。",
+    "why": "老师代码里 insert 越界不打印错误，而是 throw OutOfBounds()。",
+    "example": "if (theIndex < 0 || theIndex > listSize)\n    throw OutOfBounds();",
+    "cEquiv": "C 里的替代做法是返回错误码（-1）或者 printf 提示。",
+    "pitfalls": [
+      "throw 之后函数立刻结束，后面的代码不会执行。",
+      "没人 catch 的话程序会终止。",
+      "考试写代码时用 printf 提示也能得分，但要知道课件用的是异常。"
+    ],
+    "related": ["array-list", "chain"]
+  },
+  {
+    "id": "const",
+    "title": "const 成员函数：这个函数不改对象",
+    "oneLiner": "函数后面的 const 表示它只读，不修改任何成员变量。",
+    "why": "get、indexOf、size 这些函数后面都带 const。",
+    "example": "int size() const { return listSize; }        // 只读\nvoid insert(int i, const T& x);              // 参数只读",
+    "cEquiv": "C 里对应的是 const 参数，但没有「成员函数 const」这个概念。",
+    "pitfalls": [
+      "const 函数里不能修改成员变量，否则编译报错。",
+      "参数写 const T& 既避免拷贝，又保证不修改。"
+    ],
+    "related": ["array-list", "chain"]
+  },
+  {
+    "id": "friend",
+    "title": "friend：允许别人访问我的私有成员",
+    "oneLiner": "在类里写 friend class X，X 就能直接访问这个类的 private 成员。",
+    "why": "ChainNode 把数据藏起来了，但 Chain 要改 next，于是把 Chain 设成友元。",
+    "example": "template<class T> class Chain;   // 前向声明\n\ntemplate<class T>\nclass ChainNode {\n    friend class Chain<T>;       // Chain 可以访问我的私有成员\nprivate:\n    T data;\n    ChainNode<T>* next;\n};",
+    "cEquiv": "C 的 struct 全是公开的，没有这个概念。",
+    "pitfalls": [
+      "友元要先声明对方（前向声明），否则编译不过。",
+      "友元关系是单向的：A 把 B 当朋友，不代表 B 把 A 当朋友。"
+    ],
+    "related": ["chain"]
+  }
+]

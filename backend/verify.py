@@ -144,6 +144,10 @@ def verify_links() -> int:
                 if exp.get("anchor") and exp["anchor"] not in code:
                     warn(f"{module['id']}/{tpl['id']} 的 anchor 找不到：{exp['anchor'][:40]}")
                     failures += 1
+            for note in tpl.get("lineNotes", []):
+                if note.get("anchor") and note["anchor"] not in code:
+                    warn(f"{module['id']}/{tpl['id']} 的逐行注释 anchor 找不到：{note['anchor'][:40]}")
+                    failures += 1
     return failures
 
 

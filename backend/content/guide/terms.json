@@ -1,0 +1,182 @@
+[
+  {
+    "id": "seqlist-name",
+    "moduleId": "linear-list",
+    "concept": "顺序表",
+    "familiar": { "name": "SqList", "code": "struct SqList { int data[MAXSIZE]; int length; };" },
+    "ppt": { "name": "ArrayLinearList<T>", "code": "template<class T> class ArrayLinearList { T* element; int arrayLength, listSize; };" },
+    "difference": "名字不同，含义一样：一个数组 + 一个表示个数的变量。老师的数组是指针 + 容量，因为要动态扩容。",
+    "severity": "info"
+  },
+  {
+    "id": "seqlist-insert",
+    "moduleId": "linear-list",
+    "concept": "顺序表插入",
+    "familiar": { "name": "ListInsert(&L, i, e)", "code": "// i 是位序，从 1 开始\nfor (j = L.length; j >= i; j--)\n    L.data[j] = L.data[j-1];\nL.data[i-1] = e;" },
+    "ppt": { "name": "insert(theIndex, x)", "code": "// theIndex 是下标，从 0 开始\nfor (int i = listSize-1; i >= theIndex; i--)\n    element[i+1] = element[i];\nelement[theIndex] = x;" },
+    "difference": "差 1：逊哥的 i=3 对应老师代码的 theIndex=2。写代码前先问自己「题目说的是第几个还是下标」。",
+    "severity": "warn"
+  },
+  {
+    "id": "seqlist-erase",
+    "moduleId": "linear-list",
+    "concept": "顺序表删除",
+    "familiar": { "name": "ListDelete(&L, i, &e)", "code": "for (j = i; j < L.length; j++)\n    L.data[j-1] = L.data[j];\nL.length--;" },
+    "ppt": { "name": "erase(theIndex)", "code": "for (int i = theIndex; i < listSize-1; i++)\n    element[i] = element[i+1];\nlistSize--;" },
+    "difference": "方向一致（从前往后挪），只是下标从 0 开始。",
+    "severity": "info"
+  },
+  {
+    "id": "list-node",
+    "moduleId": "linear-list",
+    "concept": "链表结点",
+    "familiar": { "name": "LNode", "code": "typedef struct LNode {\n    int data;\n    struct LNode *next;\n} LNode, *LinkList;" },
+    "ppt": { "name": "ChainNode<T>", "code": "template<class T> class ChainNode {\n    friend class Chain<T>;\n    T data; ChainNode<T>* next;\n};" },
+    "difference": "一样是两个字段，只是模板化 + 私有 + 友元。",
+    "severity": "info"
+  },
+  {
+    "id": "list-head",
+    "moduleId": "linear-list",
+    "concept": "头结点",
+    "familiar": { "name": "带头结点", "code": "// 空表：L->next == NULL\n// 第 1 个元素是 L->next" },
+    "ppt": { "name": "不带头结点", "code": "// 空表：firstNode == 0\n// 第 1 个元素就是 firstNode" },
+    "difference": "老师代码没有头结点！所以删除首元要单独判断 theIndex == 0，你的插入/删除图要跟着改。",
+    "severity": "warn"
+  },
+  {
+    "id": "list-insert",
+    "moduleId": "linear-list",
+    "concept": "链表插入",
+    "familiar": { "name": "先接后断", "code": "s->next = p->next;\np->next = s;" },
+    "ppt": { "name": "一步构造", "code": "p->next = new ChainNode<T>(x, p->next);" },
+    "difference": "老师把「建结点 + 接后继」写在构造函数里，语义完全一样，别被一行骗了。",
+    "severity": "info"
+  },
+  {
+    "id": "list-destroy",
+    "moduleId": "linear-list",
+    "concept": "释放链表",
+    "familiar": { "name": "自己写 DestroyList", "code": "while (L) { q = L->next; free(L); L = q; }" },
+    "ppt": { "name": "析构函数", "code": "~Chain() {\n    ChainNode<T>* next;\n    while (firstNode) {\n        next = firstNode->next;\n        delete firstNode;\n        firstNode = next;\n    }\n}" },
+    "difference": "逻辑一样，只是它会在对象销毁时自动执行。",
+    "severity": "info"
+  },
+  {
+    "id": "malloc-new",
+    "moduleId": "linear-list",
+    "concept": "分配内存",
+    "familiar": { "name": "malloc / free", "code": "p = (LNode*)malloc(sizeof(LNode));\nfree(p);" },
+    "ppt": { "name": "new / delete", "code": "p = new ChainNode<T>(x);\ndelete p;" },
+    "difference": "new 会自动调用构造函数（顺便把 next 置好），delete 会自动调用析构函数。不用写 sizeof。",
+    "severity": "info"
+  },
+  {
+    "id": "seqlist-grow",
+    "moduleId": "linear-list",
+    "concept": "顺序表扩容",
+    "familiar": { "name": "realloc", "code": "L.data = (int*)realloc(L.data, 2*MAX*sizeof(int));" },
+    "ppt": { "name": "changeLength1D", "code": "T* temp = new T[newLength];\n// 逐个复制\ndelete[] a;\na = temp;" },
+    "difference": "老师手写了一段「新建-复制-删除」，因为 C++ 没有 realloc 的等价物（也不该对对象用）。",
+    "severity": "info"
+  },
+  {
+    "id": "circle-list",
+    "moduleId": "linear-list",
+    "concept": "循环链表",
+    "familiar": { "name": "头指针表示", "code": "head->next == head 表示空表" },
+    "ppt": { "name": "尾指针表示", "code": "rear->next 就是首结点，头尾访问都是 O(1)" },
+    "difference": "老师课件特别强调「记录尾指针更容易访问头尾」，考选择题会问哪种更好。",
+    "severity": "info"
+  },
+  {
+    "id": "stack-top",
+    "moduleId": "stack-queue",
+    "concept": "顺序栈的 top",
+    "familiar": { "name": "top 指栈顶元素", "code": "S.top = -1;  // 空栈\npush: S.data[++S.top] = e;" },
+    "ppt": { "name": "stackTop 指栈顶元素", "code": "stackTop = -1;\nstack[++stackTop] = e;" },
+    "difference": "这里两边一致，可以放心套用你熟悉的公式。",
+    "severity": "info"
+  },
+  {
+    "id": "stack-full",
+    "moduleId": "stack-queue",
+    "concept": "栈满",
+    "familiar": { "name": "top == MAXSIZE-1", "code": "if (S.top == MAXSIZE-1) 上溢" },
+    "ppt": { "name": "stackTop == arrayLength-1", "code": "满了就 changeLength1D 翻倍，不报错" },
+    "difference": "老师的顺序栈会「自动扩容」，所以没有上溢这个概念——这点和课本不同，答题时按题目要求写。",
+    "severity": "warn"
+  },
+  {
+    "id": "cq-front",
+    "moduleId": "stack-queue",
+    "concept": "循环队列的 front",
+    "familiar": { "name": "front 指队头元素", "code": "队头 = q[front];\n出队：front = (front+1) % M;" },
+    "ppt": { "name": "front 指队首前一位", "code": "队头 = q[(front+1) % M];\n出队：front = (front+1) % M; 再取 q[front];" },
+    "difference": "含义差一格！老师代码里 front 指的那格永远是空的（或已出队的）。取队头要 +1。",
+    "severity": "warn"
+  },
+  {
+    "id": "cq-full",
+    "moduleId": "stack-queue",
+    "concept": "循环队列判满",
+    "familiar": { "name": "(rear+1) % M == front", "code": "// rear 指向队尾的下一个" },
+    "ppt": { "name": "(rear+1) % MaxSize == front", "code": "// rear 指向队尾元素本身" },
+    "difference": "公式长得一样，但因为 rear 的含义不同，含义其实反过来了。背公式没用，要背「谁指哪儿」。",
+    "severity": "warn"
+  },
+  {
+    "id": "cq-count",
+    "moduleId": "stack-queue",
+    "concept": "循环队列元素个数",
+    "familiar": { "name": "(rear - front + M) % M", "code": "" },
+    "ppt": { "name": "(rear - front + MaxSize) % MaxSize", "code": "" },
+    "difference": "这个公式两种约定下完全一样，可以放心记。",
+    "severity": "info"
+  },
+  {
+    "id": "linkqueue-del",
+    "moduleId": "stack-queue",
+    "concept": "链队列删除最后一个元素",
+    "familiar": { "name": "尾指针要处理", "code": "if (Q.rear == p) Q.rear = Q.front;" },
+    "ppt": { "name": "尾指针归零", "code": "if (front == 0) rear = 0;" },
+    "difference": "本质相同：删空之后尾指针必须重新指向「空」，否则悬空。这是必考填空。",
+    "severity": "info"
+  },
+  {
+    "id": "adt",
+    "moduleId": "intro",
+    "concept": "抽象数据类型",
+    "familiar": { "name": "ADT 伪代码", "code": "ADT List {\n  数据对象 D\n  数据关系 R\n  基本操作 ...\n}" },
+    "ppt": { "name": "class 定义", "code": "template<class T>\nclass ArrayLinearList { ... };" },
+    "difference": "ADT 是「描述能做什么」，class 是「用代码实现它」。两者是设计与实现的关系。",
+    "severity": "info"
+  },
+  {
+    "id": "complexity-symbols",
+    "moduleId": "intro",
+    "concept": "渐近符号",
+    "familiar": { "name": "只记 O", "code": "O(n)、O(n^2)……" },
+    "ppt": { "name": "四个符号都要会", "code": "Ο（上界）、Ω（下界）、Θ（同阶）、ο（严格上界）" },
+    "difference": "老师期末会考「下列哪个不成立」，只认识 O 会直接丢分。",
+    "severity": "warn"
+  },
+  {
+    "id": "reference-param",
+    "moduleId": "intro",
+    "concept": "函数改实参",
+    "familiar": { "name": "传地址", "code": "void InitList(SqList *L) { ... }\nInitList(&L);" },
+    "ppt": { "name": "传引用", "code": "void insert(int i, const T& x)\n// 调用时直接传 x，不用写 &" },
+    "difference": "引用在调用处不需要写 &，在声明处才写。这是最容易看错的地方。",
+    "severity": "warn"
+  },
+  {
+    "id": "kmp-next",
+    "moduleId": "string",
+    "concept": "KMP 的 next 数组",
+    "familiar": { "name": "next[1] = 0", "code": "next[1]=0; next[j]=k;\n// 数组从 1 开始，next[0] 空着" },
+    "ppt": { "name": "next[0] = -1", "code": "next[0] = -1;\n// 整体左移，匹配失败时 j = next[j]" },
+    "difference": "同一套思想，两种下标约定，数值整体差 1。考试按老师的 next[0] = -1 写。",
+    "severity": "warn"
+  }
+]

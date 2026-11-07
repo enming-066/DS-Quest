@@ -14,6 +14,7 @@ const routes = [
     component: () => import('./views/ProblemView.vue')
   },
   { path: '/wrongbook', name: 'wrongbook', component: () => import('./views/WrongBookView.vue') },
+  { path: '/guide', name: 'guide', component: () => import('./views/GuideView.vue') },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 

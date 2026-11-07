@@ -137,6 +137,15 @@ def bootstrap() -> dict[str, Any]:
     }
 
 
+@app.get("/api/guide")
+def guide() -> dict[str, Any]:
+    """C++ 语法路标 + 术语对照，供前端一次性加载。"""
+    return {
+        "cpp": library.guide.get("cpp", []),
+        "terms": library.guide.get("terms", []),
+    }
+
+
 @app.get("/api/modules/{module_id}")
 def get_module(module_id: str) -> dict[str, Any]:
     module = library.module_public(module_id)

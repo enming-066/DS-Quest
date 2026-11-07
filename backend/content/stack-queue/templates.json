@@ -107,6 +107,38 @@
     ],
     "relatedKnowledge": [
       "circular-queue"
+    ],
+    "lineNotes": [
+      {
+        "anchor": "Queue(int MaxQueueSize = 10) {",
+        "what": "构造函数：分配数组并把 front/rear 都置 0（空队列）。",
+        "syntax": "= 10 是默认参数，调用时可以少传",
+        "c": "对应 InitQueue。"
+      },
+      {
+        "anchor": "MaxSize = MaxQueueSize + 1;",
+        "what": "多开一格：留着这一格空位，才能区分「空」和「满」。",
+        "syntax": "为什么 +1 是这道题的核心，别当成笔误",
+        "c": "课本上也是「牺牲一个单元」。"
+      },
+      {
+        "anchor": "bool IsFull() const { return ((rear + 1) % MaxSize == front); }",
+        "what": "判满：rear 再走一格就撞上 front。",
+        "syntax": "% 取模让指针绕回 0；const 表示这个函数不改对象",
+        "c": "课本写法一样，但 rear 的含义不同（见术语罗盘）。"
+      },
+      {
+        "anchor": "rear = (rear + 1) % MaxSize;",
+        "what": "入队：先把 rear 前移一格，再把元素放进去。",
+        "syntax": "先移指针再赋值，顺序和另一种约定相反",
+        "c": "C 里也是 rear = (rear+1) % MAXSIZE。"
+      },
+      {
+        "anchor": "int Length() const { return (rear - front + MaxSize) % MaxSize; }",
+        "what": "元素个数：加 MaxSize 是为了处理 rear 绕到 front 前面（相减为负）的情况。",
+        "syntax": "取模前先加，避免负数取模",
+        "c": "公式完全相同。"
+      }
     ]
   },
   {

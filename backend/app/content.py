@@ -58,6 +58,7 @@ class ContentLibrary:
         self.modules: list[dict[str, Any]] = []
         self.by_id: dict[str, dict[str, Any]] = {}
         self.problems: dict[str, dict[str, Any]] = {}
+        self.guide: dict[str, Any] = {}
         self.load()
 
     # ------------------------------------------------------------------ load
@@ -80,6 +81,16 @@ class ContentLibrary:
             self.by_id[module_id] = module
 
         self.modules.sort(key=lambda m: m["order"])
+        self.guide = self._load_guide()
+
+    def _load_guide(self) -> dict[str, Any]:
+        """C++ 路标 / 术语罗盘这类全局辅助内容，放在 content/guide 下。"""
+        guide_dir = self.root / "guide"
+        data: dict[str, Any] = {}
+        if guide_dir.exists():
+            for path in sorted(guide_dir.glob("*.json")):
+                data[path.stem] = _read_json(path)
+        return data
 
     def _load_module(self, module_id: str, entry: dict[str, Any]) -> dict[str, Any]:
         module_dir = self.root / module_id

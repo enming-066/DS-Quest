@@ -77,9 +77,17 @@ def main() -> int:
         "for(int j=n;j>=pos;j--)a[j]=a[j-1];a[pos-1]=x;n++;"
         "for(int i=0;i<n;i++)cout<<a[i]<<(i+1==n?'\\n':' ');return 0;}"
     )
+    # 先看这道题是不是已经通过过（重复跑冒烟测试时不会再给经验）
+    _, raw_progress = get("/api/progress")
+    already_solved = "ll-01" in json.loads(raw_progress)["problemsSolved"]
+
     _, res = post("/api/judge", {"problemId": "ll-01", "code": good, "lang": "cpp"})
     check("正确代码 AC", res["verdict"] == "AC", res["verdict"])
-    check("AC 有经验奖励", res.get("xpGained", 0) > 0, str(res.get("xpGained")))
+    check("AC 后标记为已通过", res.get("progress", {}).get("solved") is True)
+    if not already_solved:
+        check("首次通过有经验奖励", res.get("xpGained", 0) > 0, str(res.get("xpGained")))
+    else:
+        check("重复通过不重复加经验", res.get("xpGained", 0) == 0, str(res.get("xpGained")))
 
     bad = "#include <iostream>\nint main(){int n;std::cin>>n;return 0;}"
     _, res2 = post("/api/judge", {"problemId": "ll-01", "code": bad, "lang": "cpp"})

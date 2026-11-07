@@ -40,6 +40,7 @@ const post = (path, body) => request(path, { method: 'POST', body: JSON.stringif
 
 export const api = {
   bootstrap: () => request('/bootstrap'),
+  guide: () => request('/guide'),
   module: (id) => request(`/modules/${encodeURIComponent(id)}`),
   problem: (id) => request(`/problems/${encodeURIComponent(id)}`),
   judge: (payload) => post('/judge', payload),

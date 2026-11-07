@@ -160,6 +160,14 @@ function toggleTemplate(id) {
 
       <!-- 代码库 -->
       <section v-else-if="tab === 'code'" class="tpl-list">
+        <div class="cpp-hint card">
+          <Icon name="bulb" :size="17" />
+          <div class="grow">
+            <strong>看不懂 template / 指针 / 类？</strong>
+            <span>这些是 C++ 语法，不是数据结构本身。先花 3 分钟补一下，再回来看代码会顺很多。</span>
+          </div>
+          <RouterLink to="/guide" class="btn btn-sm">去语法急救</RouterLink>
+        </div>
         <article v-for="tpl in moduleData.templates" :key="tpl.id" class="tpl card">
           <button class="tpl-head" @click="toggleTemplate(tpl.id)">
             <div class="grow">
@@ -181,6 +189,7 @@ function toggleTemplate(id) {
               :code="tpl.code"
               :lang="tpl.lang"
               :explanations="tpl.explanations || []"
+              :line-notes="tpl.lineNotes || []"
               :filename="(tpl.file || '').split('/').pop()"
             />
             <div v-if="tpl.pitfalls?.length" class="pitfalls">
@@ -356,6 +365,26 @@ function toggleTemplate(id) {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.cpp-hint {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #fbf7ff, #f2f6ff);
+  border-color: #e4dcfb;
+  color: var(--ink-2);
+}
+.cpp-hint strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.cpp-hint span {
+  font-size: 12.5px;
+  color: var(--muted);
 }
 .know-item,
 .prob {

@@ -47,6 +47,80 @@
     ],
     "relatedKnowledge": [
       "seqlist"
+    ],
+    "lineNotes": [
+      {
+        "anchor": "template<class T>",
+        "what": "声明这是一个类模板：里面的 T 是「类型占位符」，用的时候再决定是 int 还是 double。",
+        "syntax": "template<class T> 表示「下面这个类对任意类型 T 都适用」",
+        "c": "C 没有模板，只能每种类型重写一遍，或用 void*。"
+      },
+      {
+        "anchor": "class ArrayLinearList {",
+        "what": "定义一个类。类 = 数据 + 操作这些数据的函数，装在一起。",
+        "syntax": "class 定义最后必须有一个分号（};），漏了会报 expected ';'",
+        "c": "C 用 struct 只装数据，函数是分开写的。"
+      },
+      {
+        "anchor": "ArrayLinearList(int initialCapacity = 10) {",
+        "what": "构造函数：new 一个对象时自动执行，用来初始化成员变量。",
+        "syntax": "构造函数没有返回值类型，名字必须和类名一样；= 10 是默认参数",
+        "c": "C 里要自己写 InitList() 并记得调用。"
+      },
+      {
+        "anchor": "element = new T[arrayLength];",
+        "what": "在堆上申请 arrayLength 个 T 的空间，element 指向这块内存的首地址。",
+        "syntax": "new T[n] 分配数组，配套用 delete[] 释放",
+        "c": "相当于 malloc(arrayLength * sizeof(T))。"
+      },
+      {
+        "anchor": "~ArrayLinearList() { delete[] element; }",
+        "what": "析构函数：对象销毁时自动执行，把构造函数里申请的内存还给系统。",
+        "syntax": "~类名() 是析构函数，没有参数、没有返回值",
+        "c": "相当于 free(element)，但要自己记得调。"
+      },
+      {
+        "anchor": "T& get(int theIndex) const {",
+        "what": "返回下标为 theIndex 的元素的「引用」，所以外面能直接改它。",
+        "syntax": "T& 是引用返回；函数末尾的 const 表示这个函数不修改对象",
+        "c": "C 里要返回指针，或者用 T* 参数带回。"
+      },
+      {
+        "anchor": "int indexOf(const T& theElement) const {",
+        "what": "按值查找，返回下标，找不到返回 -1。",
+        "syntax": "const T& 表示「传引用但我不改它」，避免拷贝一份",
+        "c": "相当于 int indexOf(const T* e)。"
+      },
+      {
+        "anchor": "void erase(int theIndex) {",
+        "what": "删除下标 theIndex 的元素：把后面的元素整体往前挪一格。",
+        "syntax": "无返回值的成员函数直接写 void",
+        "c": "和 ListDelete 思路一样，只是下标从 0 开始。"
+      },
+      {
+        "anchor": "for (int i = theIndex; i < listSize - 1; i++)",
+        "what": "从前往后挪：用后一个元素覆盖前一个。",
+        "syntax": "for 里的 i 只在这个循环里有效（局部变量）",
+        "c": "C 的 for 写法相同。"
+      },
+      {
+        "anchor": "void insert(int theIndex, const T& theElement) {",
+        "what": "在下标 theIndex 处插入：先扩容（如果满了），再从后往前腾位置。",
+        "syntax": "参数里的 const T& 是「只读引用」",
+        "c": "对应 ListInsert，但 theIndex 是下标不是位序。"
+      },
+      {
+        "anchor": "element[i + 1] = element[i];",
+        "what": "把第 i 个元素搬到 i+1，给新元素腾出下标 theIndex 的位置。",
+        "syntax": "数组下标从 0 开始，越界不会报错但会破坏内存",
+        "c": "C 里完全一样。"
+      },
+      {
+        "anchor": "void changeLength1D(T*& a, int oldLength, int newLength) {",
+        "what": "扩容：申请两倍大的新数组，把旧数据复制过去，再释放旧数组。",
+        "syntax": "T*& 是「指针的引用」——函数里让 a 指向新数组，外面的指针也会跟着变",
+        "c": "相当于二级指针 T**，或者直接返回新指针。"
+      }
     ]
   },
   {
@@ -102,6 +176,80 @@
     ],
     "relatedKnowledge": [
       "linkedlist"
+    ],
+    "lineNotes": [
+      {
+        "anchor": "template<class T> class Chain;",
+        "what": "前向声明：先告诉编译器「有个模板类叫 Chain」，细节待会儿再写。",
+        "syntax": "因为 ChainNode 里要用 Chain 做友元，必须提前声明",
+        "c": "C 里用 struct Chain; 做前向声明。"
+      },
+      {
+        "anchor": "class ChainNode {",
+        "what": "结点类：一个数据域 + 一个指向下一个结点的指针。",
+        "syntax": "类里的成员默认是 private，外面不能直接访问",
+        "c": "对应 typedef struct LNode { int data; struct LNode* next; }。"
+      },
+      {
+        "anchor": "friend class Chain<T>;",
+        "what": "把 Chain 设为友元，让 Chain 能直接访问 data 和 next 这两个私有成员。",
+        "syntax": "friend 只是「开权限」，不是继承",
+        "c": "C 的 struct 成员全是公开的，没有这个概念。"
+      },
+      {
+        "anchor": "ChainNode(const T& theData, ChainNode<T>* theNext = 0)",
+        "what": "结点构造函数：new 一个结点时顺便把 data 和 next 都设好。",
+        "syntax": ": data(theData), next(theNext) 是初始化列表，比在函数体里赋值更直接",
+        "c": "相当于 malloc 之后手动赋值。"
+      },
+      {
+        "anchor": "Chain() { firstNode = 0; listSize = 0; }",
+        "what": "链表的构造函数：空表就是首指针为空、元素个数为 0。",
+        "syntax": "0 在这里就是空指针（现代写法是 nullptr）",
+        "c": "相当于 InitList。"
+      },
+      {
+        "anchor": "T& get(int theIndex) const {",
+        "what": "按下标取元素：从 firstNode 开始走 theIndex 步。",
+        "syntax": "返回引用，所以 get(0) = 5 这种写法也合法",
+        "c": "C 里一般返回指针或者用 T* 参数带回。"
+      },
+      {
+        "anchor": "ChainNode<T>* current = firstNode;",
+        "what": "声明一个结点指针，指向首结点——遍历链表的起点。",
+        "syntax": "ChainNode<T>* 表示「指向 ChainNode<T> 的指针」",
+        "c": "对应 LNode *p = L->next。"
+      },
+      {
+        "anchor": "current = current->next;",
+        "what": "沿指针走到下一个结点。",
+        "syntax": "-> 用于指针取成员，等价于 (*current).next",
+        "c": "C 里也是 p = p->next。"
+      },
+      {
+        "anchor": "void erase(int theIndex) {",
+        "what": "删除下标 theIndex 的结点：先找前驱，再让前驱越过它，最后释放。",
+        "syntax": "成员函数可以直接改 firstNode，因为它是本类的成员",
+        "c": "和课本的删除逻辑一致，但这里没有头结点。"
+      },
+      {
+        "anchor": "delete deleteNode;",
+        "what": "把待删结点占的内存还给系统。",
+        "syntax": "new 出来的必须 delete，否则内存泄漏",
+        "c": "相当于 free(deleteNode)。"
+      },
+      {
+        "anchor": "p->next = new ChainNode<T>(theElement, p->next);",
+        "what": "一行完成「建新结点 + 把它接到 p 后面」：新结点的 next 就是 p 原来的后继。",
+        "syntax": "new 的括号里调用构造函数，第二个参数是 next",
+        "c": "等价于 s->next = p->next; p->next = s;"
+      },
+      {
+        "anchor": "Chain<T>::~Chain() {",
+        "what": "析构函数：把整条链上的结点一个个删掉。",
+        "syntax": "类外定义成员函数要写 类名<T>:: 前缀",
+        "c": "相当于 DestroyList。"
+      }
     ]
   },
   {

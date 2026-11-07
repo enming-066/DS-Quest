@@ -36,6 +36,9 @@ onMounted(() => {
           <RouterLink to="/" class="nav-link" active-class="active" exact-active-class="active">
             学习地图
           </RouterLink>
+          <RouterLink to="/guide" class="nav-link" active-class="active">
+            语法急救
+          </RouterLink>
           <RouterLink to="/wrongbook" class="nav-link" active-class="active">
             错题本
             <span v-if="state.wrongCount" class="nav-badge">{{ state.wrongCount }}</span>
